@@ -9,7 +9,9 @@ import Home from "../pages/Home";
 import { AuthProvider } from "../contexts/AuthContext";
 import SignIn from "../pages/SignIn";
 import SignUp from "../pages/SignUp";
-// import ProtectedRoute from "./protectedRoute";
+import ProtectedRoute from "./protectedRoute";
+import AdminDashboard from "../pages/AdminDashboard";
+import SocialWorkerDashboard from "../pages/SocialWorkerDashboard";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -29,9 +31,25 @@ export const AppRouter = createBrowserRouter([
       {
         path: ROUTES.DONATE,
         element: (
-          // <ProtectedRoute>
-          <DonateUs />
-          // </ProtectedRoute>
+          <ProtectedRoute allowedRoles={["donor"]}>
+            <DonateUs />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: ROUTES.ADMIN_DASHBOARD,
+        element: (
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: ROUTES.SOCIAL_WORKER_DASHBOARD,
+        element: (
+          <ProtectedRoute allowedRoles={["social_worker"]}>
+            <SocialWorkerDashboard />
+          </ProtectedRoute>
         ),
       },
     ],
