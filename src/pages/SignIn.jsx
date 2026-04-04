@@ -2,24 +2,46 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../routes/path";
 import { useAuth } from "../contexts/AuthContext";
+import { useLogin } from "../hooks/useAuthApi";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { mutate, isPending } = useLogin();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setErrorMessage("");
 
-    // 🔥 mock login (replace with API later)
-    const userData = {
-      email,
-      name: "Demo User",
-    };
+    mutate(
+      { email, password },
+      {
+        onSuccess: (response) => {
+          login(response);
 
-    login(userData);
-    navigate(ROUTES.HOME);
+          const role = response?.user?.role;
+
+          if (role === "donor") {
+            navigate(ROUTES.DONATE);
+          } else if (role === "admin") {
+            navigate(ROUTES.ADMIN_DASHBOARD);
+          } else if (role === "social_worker") {
+            navigate(ROUTES.SOCIAL_WORKER_DASHBOARD);
+          } else {
+            navigate(ROUTES.HOME);
+          }
+        },
+        onError: (error) => {
+          setErrorMessage(
+            error?.response?.data?.message || "Login failed. Please try again.",
+          );
+        },
+      },
+    );
   };
 
   return (
@@ -27,7 +49,7 @@ const SignIn = () => {
       <h2>Sign In</h2>
 
       <form onSubmit={handleSubmit}>
-        <div>
+        <div style={{ marginBottom: "12px" }}>
           <input
             type="email"
             placeholder="Email"
@@ -37,7 +59,7 @@ const SignIn = () => {
           />
         </div>
 
-        <div>
+        <div style={{ marginBottom: "12px" }}>
           <input
             type="password"
             placeholder="Password"
@@ -47,10 +69,19 @@ const SignIn = () => {
           />
         </div>
 
-        <button type="submit">Login</button>
+        {errorMessage && (
+          <p style={{ color: "red", marginBottom: "12px" }}>{errorMessage}</p>
+        )}
+
+        <button type="submit" disabled={isPending}>
+          {isPending ? "Logging in..." : "Login"}
+        </button>
       </form>
 
-      <p onClick={() => navigate(ROUTES.SIGNUP)} style={{ cursor: "pointer" }}>
+      <p
+        onClick={() => navigate(ROUTES.SIGNUP)}
+        style={{ cursor: "pointer", marginTop: "12px" }}
+      >
         Don't have an account? Sign Up
       </p>
     </div>
