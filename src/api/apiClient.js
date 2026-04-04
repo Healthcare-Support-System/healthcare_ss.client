@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8000/";
+const API_BASE_URL = "http://localhost:8000";
 
-export const apiClient = axios.create({
+export const publicApiClient = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
   headers: {
@@ -10,7 +10,15 @@ export const apiClient = axios.create({
   },
 });
 
-apiClient.interceptors.request.use(
+export const privateApiClient = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+privateApiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
 
@@ -20,5 +28,5 @@ apiClient.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
