@@ -8,4 +8,5 @@ export const ROUTES = {
     STORIES: "/stories",
     ADMIN_DASHBOARD: "/admin",
     SOCIAL_WORKER_DASHBOARD: "/social-worker",
+    SUPPORT_REQUEST: "/support-request",
 };

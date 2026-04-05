@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+
 
 const Home = () => {
+const navigate = useNavigate();
   return (
     <div className="bg-white min-h-screen">
       {/* Hero Section */}
@@ -12,9 +15,12 @@ const Home = () => {
           Your donation can make a difference in the lives of low-income cancer
           patients receiving treatment at Apeksha Hospital.
         </p>
-        <button className="mt-6 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
-          Donate Now
-        </button>
+      <button
+        onClick={() => navigate("/support-request")}
+        className="mt-6 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+      >
+  Donate Now
+</button>
       </div>
 
       {/* About Section */}
