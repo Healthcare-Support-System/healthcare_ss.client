@@ -78,14 +78,37 @@ const SignIn = () => {
         else if (role === "social_worker")
           navigate(ROUTES.SOCIAL_WORKER_DASHBOARD);
         else navigate(ROUTES.HOME);
+          if (role === "donor") {
+            localStorage.setItem("donorId", response?.user?.id || "");
+            localStorage.setItem(
+              "donorName",
+              response?.user?.full_name ||
+                response?.user?.first_name ||
+                response?.user?.name ||
+                "",
+            );
+            navigate(ROUTES.DONATE);
+          } else if (role === "admin") {
+            navigate(ROUTES.ADMIN_HOME);
+          } else if (role === "social_worker") {
+            navigate(ROUTES.ADMIN_HOME);
+          } else {
+            navigate(ROUTES.HOME);
+          }
+        },
+        onError: (error) => {
+          setErrorMessage(
+            error?.response?.data?.message || "Login failed. Please try again.",
+          );
+        },
       },
-      onError: (error) => {
-        setErrorMessage(
-          error?.response?.data?.message ||
-            "Login failed. Please try again."
-        );
-      },
-    }
+      // onError: (error) => {
+      //   setErrorMessage(
+      //     error?.response?.data?.message ||
+      //       "Login failed. Please try again."
+      //   );
+      // },
+    //}
   );
 };
 
