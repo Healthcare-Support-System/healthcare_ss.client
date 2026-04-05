@@ -36,9 +36,9 @@ const SignIn = () => {
             );
             navigate(ROUTES.DONATE);
           } else if (role === "admin") {
-            navigate(ROUTES.ADMIN_DASHBOARD);
+            navigate(ROUTES.ADMIN_HOME);
           } else if (role === "social_worker") {
-            navigate(ROUTES.SOCIAL_WORKER_DASHBOARD);
+            navigate(ROUTES.ADMIN_HOME);
           } else {
             navigate(ROUTES.HOME);
           }

@@ -19,7 +19,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     }
 
     if (user.role === "social_worker") {
-      return <Navigate to={ROUTES.SOCIAL_WORKER_DASHBOARD} replace />;
+      return <Navigate to={ROUTES.ADMIN_DASHBOARD} replace />;
     }
 
     return <Navigate to={ROUTES.HOME} replace />;
