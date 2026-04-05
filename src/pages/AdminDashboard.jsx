@@ -4,6 +4,7 @@ const AdminDashboard = () => {
       <h1>Admin Dashboard</h1>
       <p>This page is under construction.</p>
     </div>
+    
   );
 };
 

@@ -12,6 +12,7 @@ import SignUp from "../pages/SignUp";
 import ProtectedRoute from "./protectedRoute";
 import AdminDashboard from "../pages/AdminDashboard";
 import SocialWorkerDashboard from "../pages/SocialWorkerDashboard";
+import ViewAllSupportRequests from "../pages/supportRequests";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ export const AppRouter = createBrowserRouter([
             <SocialWorkerDashboard />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: ROUTES.SUPPORT_REQUEST,
+        element: <ViewAllSupportRequests />,
       },
     ],
   },
