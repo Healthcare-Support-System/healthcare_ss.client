@@ -56,8 +56,6 @@
 //   },
 // ]);
 
-
-
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "../App";
 import About from "../pages/About";
@@ -76,6 +74,7 @@ import AdminHome from "../pages/AdminHome";
 import AllPatients from "../pages/AllPatients";
 import DonationUsage from "../pages/DonationUsage";
 import MakeRequest from "../pages/MakeRequest";
+import ManageDonationRequests from "../pages/ManageDonationRequest";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -116,7 +115,7 @@ export const AppRouter = createBrowserRouter([
             element: <Navigate to={ROUTES.ADMIN_HOME} replace />,
           },
           {
-            path: "home",
+            path: ROUTES.ADMIN_HOME,
             element: (
               <ProtectedRoute allowedRoles={["admin", "social_worker"]}>
                 <AdminHome />
@@ -124,7 +123,7 @@ export const AppRouter = createBrowserRouter([
             ),
           },
           {
-            path: "patients",
+            path: ROUTES.ALL_PATIENTS,
             element: (
               <ProtectedRoute allowedRoles={["admin"]}>
                 <AllPatients />
@@ -132,7 +131,7 @@ export const AppRouter = createBrowserRouter([
             ),
           },
           {
-            path: "donation-usage",
+            path: ROUTES.DONATION_USAGE,
             element: (
               <ProtectedRoute allowedRoles={["admin"]}>
                 <DonationUsage />
@@ -140,10 +139,18 @@ export const AppRouter = createBrowserRouter([
             ),
           },
           {
-            path: "make-request",
+            path: ROUTES.MAKE_REQUEST,
             element: (
               <ProtectedRoute allowedRoles={["social_worker"]}>
                 <MakeRequest />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: ROUTES.MANAGE_DONATION_REQUESTS,
+            element: (
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <ManageDonationRequests />
               </ProtectedRoute>
             ),
           },
