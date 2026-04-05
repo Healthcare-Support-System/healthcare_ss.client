@@ -26,6 +26,14 @@ const SignIn = () => {
           const role = response?.user?.role;
 
           if (role === "donor") {
+            localStorage.setItem("donorId", response?.user?.id || "");
+            localStorage.setItem(
+              "donorName",
+              response?.user?.full_name ||
+                response?.user?.first_name ||
+                response?.user?.name ||
+                "",
+            );
             navigate(ROUTES.DONATE);
           } else if (role === "admin") {
             navigate(ROUTES.ADMIN_DASHBOARD);
