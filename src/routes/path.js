@@ -9,4 +9,5 @@ export const ROUTES = {
     ADMIN_DASHBOARD: "/admin",
     SOCIAL_WORKER_DASHBOARD: "/social-worker",
     SUPPORT_REQUEST: "/support-request",
+    MANAGE_DONATION_REQUESTS: "/manage-donation-requests",
 };

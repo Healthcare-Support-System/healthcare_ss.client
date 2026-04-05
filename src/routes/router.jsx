@@ -13,6 +13,7 @@ import ProtectedRoute from "./protectedRoute";
 import AdminDashboard from "../pages/AdminDashboard";
 import SocialWorkerDashboard from "../pages/SocialWorkerDashboard";
 import ViewAllSupportRequests from "../pages/supportRequests";
+import ManageDonationRequests from "../pages/ManageDonationRequest";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -57,6 +58,14 @@ export const AppRouter = createBrowserRouter([
         path: ROUTES.SUPPORT_REQUEST,
         element: <ViewAllSupportRequests />,
       },
+      {
+        path: ROUTES.MANAGE_DONATION_REQUESTS,
+         element: (
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <ManageDonationRequests/>
+          </ProtectedRoute>
+        ),
+      }
     ],
   },
 ]);
