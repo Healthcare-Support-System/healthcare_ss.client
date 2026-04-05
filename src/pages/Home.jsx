@@ -139,7 +139,7 @@ const Home = () => {
 
               <div className="hero-line mt-10 flex flex-wrap gap-4">
                 <button
-                  onClick={() => navigate("/support-request")}
+                  onClick={() => navigate("/donate")}
                   className="btn-pulse px-8 py-3.5 rounded-full font-semibold text-white transition-all duration-300 hover:scale-105"
                   style={{ background: 'linear-gradient(135deg, #5E548E 0%, #7B6DB0 100%)', fontSize: '1rem' }}
                 >
