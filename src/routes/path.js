@@ -9,4 +9,12 @@ export const ROUTES = {
     DONOR_DASHBOARD: "/donor-dashboard",
     ADMIN_DASHBOARD: "/admin",
     SOCIAL_WORKER_DASHBOARD: "/social-worker",
+    SUPPORT_REQUEST: "/support-requests",
+    ADMIN_HOME: "/admin/home",
+    ALL_PATIENTS: "/admin/patients",
+    DONATION_USAGE: "/admin/donation-usage",
+    MAKE_REQUEST: "/admin/make-request",
+    
+    // SUPPORT_REQUEST: "/support-request",
+    MANAGE_DONATION_REQUESTS: "/admin/manage-donation-requests",
 };

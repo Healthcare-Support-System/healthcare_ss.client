@@ -6,4 +6,9 @@ export const END_POINTS = {
   DELETE_DONOR_PROFILE: "api/donors/profile",
   CREATE_DONATION_REQUEST: "api/donation-requests",
   GET_DONOR_DONATION_REQUESTS: "api/donation-requests/donor",
+  ADD_PATIENT: "api/patients/add-patient",
+  GET_PATIENTS: "api/patients/get-patients",
+  GET_PATIENT_BY_ID: (id) => `api/patients/get-patient/${id}`,
+  UPDATE_PATIENT: (id) => `api/patients/update-patient/${id}`,
+  DELETE_PATIENT: (id) => `api/patients/delete-patient/${id}`,
 };

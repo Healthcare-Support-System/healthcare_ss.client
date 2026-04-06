@@ -3,7 +3,11 @@ import { useAuth } from "../contexts/AuthContext";
 import { ROUTES } from "./path";
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, authLoading } = useAuth();
+
+  if (authLoading) {
+    return <div className="p-6">Loading...</div>;
+  }
 
   if (!isAuthenticated || !user) {
     return <Navigate to={ROUTES.SIGNIN} replace />;
@@ -15,11 +19,11 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     }
 
     if (user.role === "admin") {
-      return <Navigate to={ROUTES.ADMIN_DASHBOARD} replace />;
+      return <Navigate to={ROUTES.ADMIN_HOME} replace />;
     }
 
     if (user.role === "social_worker") {
-      return <Navigate to={ROUTES.SOCIAL_WORKER_DASHBOARD} replace />;
+      return <Navigate to={ROUTES.ADMIN_HOME} replace />;
     }
 
     return <Navigate to={ROUTES.HOME} replace />;
