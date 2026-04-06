@@ -1,18 +1,17 @@
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
 import AdminTopbar from "../components/AdminTopbar";
-//import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
 
   return (
-    <div className="flex min-h-[calc(100vh-120px)]">
+    <div className="flex h-screen overflow-hidden">
       <AdminSidebar />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         <AdminTopbar />
 
-        <div className="flex-1 p-6 bg-gray-50">
+        <div className="flex-1 p-6 bg-gray-50 overflow-y-auto">
           <Outlet />
         </div>
       </div>

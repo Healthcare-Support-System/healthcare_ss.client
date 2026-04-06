@@ -1,189 +1,8 @@
-// import React from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import { ROUTES } from "../routes/path";
-// import { useAuth } from "../contexts/AuthContext";
-
-// const Navbar = () => {
-//   const { user, logout } = useAuth();
-//   const navigate = useNavigate();
-
-//   return (
-//     <nav className="bg-purple-200 shadow-md">
-//       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-//         <div>
-//           <h1 className="text-2xl font-bold text-purple-800">
-//             HOPE<span className="text-pink-500">.</span>ආදරෙයි
-//           </h1>
-//           <p className="text-sm text-gray-600 italic">
-//             Spreading kindness, one life at a time
-//           </p>
-//         </div>
-
-//         {/* NAV LINKS */}
-//         <div className="space-x-6">
-//           <Link to={ROUTES.HOME} className="text-purple-800 hover:underline">
-//             Home
-//           </Link>
-
-//           <Link to={ROUTES.ABOUT} className="text-purple-800 hover:underline">
-//             About Us
-//           </Link>
-
-//           <Link
-//             to={ROUTES.AWARENESS}
-//             className="text-purple-800 hover:underline"
-//           >
-//             Awareness
-//           </Link>
-
-//           <Link to={ROUTES.STORIES} className="text-purple-800 hover:underline">
-//             Stories
-//           </Link>
-
-//           <Link to={ROUTES.DONATE} className="text-purple-800 hover:underline">
-//             Donate Us
-//           </Link>
-//         </div>
-
-//         {/* AUTH BUTTONS */}
-//         <div className="space-x-4">
-//           {!user ? (
-//             <>
-//               <Link
-//                 to={ROUTES.SIGNIN}
-//                 className="px-4 py-2 bg-white text-purple-700 border border-purple-400 rounded-lg hover:bg-purple-100"
-//               >
-//                 Sign In
-//               </Link>
-
-//               <Link
-//                 to={ROUTES.SIGNUP}
-//                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-//               >
-//                 Sign Up
-//               </Link>
-//             </>
-//           ) : (
-//             <>
-//               <span className="text-purple-800 font-medium">
-//                 Hi, {user.name}
-//               </span>
-
-//               <button
-//                 onClick={() => {
-//                   logout();
-//                   navigate(ROUTES.SIGNIN);
-//                 }}
-//                 className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-//               >
-//                 Logout
-//               </button>
-//             </>
-//           )}
-//         </div>
-//       </div>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-// import React from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import { ROUTES } from "../routes/path";
-// import { useAuth } from "../contexts/AuthContext";
-
-// const Navbar = () => {
-//   const { user, logout } = useAuth();
-//   const navigate = useNavigate();
-
-//   const handleLogout = () => {
-//     logout();
-//     navigate(ROUTES.SIGNIN);
-//   };
-
-//   return (
-//     <nav className="bg-purple-200 shadow-md">
-//       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-//         <div>
-//           <h1 className="text-2xl font-bold text-purple-800">
-//             HOPE<span className="text-pink-500">.</span>ආදරෙයි
-//           </h1>
-//           <p className="text-sm text-gray-600 italic">
-//             Spreading kindness, one life at a time
-//           </p>
-//         </div>
-
-//         <div className="space-x-6">
-//           <Link to={ROUTES.HOME} className="text-purple-800 hover:underline">
-//             Home
-//           </Link>
-
-//           <Link to={ROUTES.ABOUT} className="text-purple-800 hover:underline">
-//             About Us
-//           </Link>
-
-//           <Link
-//             to={ROUTES.AWARENESS}
-//             className="text-purple-800 hover:underline"
-//           >
-//             Awareness
-//           </Link>
-
-//           <Link to={ROUTES.STORIES} className="text-purple-800 hover:underline">
-//             Stories
-//           </Link>
-
-//           <Link to={ROUTES.DONATE} className="text-purple-800 hover:underline">
-//             Donate Us
-//           </Link>
-//         </div>
-
-//         <div className="space-x-4">
-//           {!user ? (
-//             <>
-//               <Link
-//                 to={ROUTES.SIGNIN}
-//                 className="px-4 py-2 bg-white text-purple-700 border border-purple-400 rounded-lg hover:bg-purple-100"
-//               >
-//                 Sign In
-//               </Link>
-
-//               <Link
-//                 to={ROUTES.SIGNUP}
-//                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-//               >
-//                 Sign Up
-//               </Link>
-//             </>
-//           ) : (
-//             <>
-//               <span className="text-purple-800 font-medium">
-//                 Hi, {user.email} ({user.role})
-//               </span>
-
-//               <button
-//                 onClick={handleLogout}
-//                 className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-//               >
-//                 Logout
-//               </button>
-//             </>
-//           )}
-//         </div>
-//       </div>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
-
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ROUTES } from "../routes/path";
 import { useAuth } from "../contexts/AuthContext";
+import logoImg from "../assets/logo.jpeg";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -203,14 +22,16 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-md bg-[#5E548E]/90 shadow-md transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-white">
-            HOPE<span className="text-pink-400">.</span>ආදරෙයි
-          </h1>
-          <p className="text-sm text-purple-200 italic">
-            Spreading kindness, one life at a time
-          </p>
-        </div>
+        {/* LOGO (replaced text with image) */}
+        <div className="flex items-center">
+  <div className="bg-white p-1 rounded-full shadow-lg hover:scale-105 transition duration-300">
+    <img
+      src={logoImg}
+      alt="Logo"
+      className="h-20 w-20 object-cover rounded-full"
+    />
+  </div>
+</div>
 
         <div className="space-x-6">
           <Link
@@ -251,7 +72,7 @@ const Navbar = () => {
           {user?.role === "donor" && (
             <Link
               to={ROUTES.DONOR_DASHBOARD}
-              className="text-purple-900 hover:underline"
+              className="text-white relative transition duration-300 hover:text-pink-300 after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-pink-300 after:transition-all after:duration-300 hover:after:w-full"
             >
               Dashboard
             </Link>
@@ -278,7 +99,7 @@ const Navbar = () => {
           ) : (
             <>
               <span className="text-purple-800 font-medium">
-                Hi, {displayName} ({user.role})
+                Hi, {displayName} 
               </span>
 
               <button
