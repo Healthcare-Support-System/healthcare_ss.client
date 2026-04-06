@@ -11,4 +11,9 @@ export const END_POINTS = {
   GET_PATIENT_BY_ID: (id) => `api/patients/get-patient/${id}`,
   UPDATE_PATIENT: (id) => `api/patients/update-patient/${id}`,
   DELETE_PATIENT: (id) => `api/patients/delete-patient/${id}`,
+  GET_SUPPORT_REQUESTS: "api/support-requests/all",
+  GET_SUPPORT_REQUEST_BY_ID: (id) => `api/support-requests/${id}`,
+  ADD_SUPPORT_REQUEST: "api/support-requests/add",
+  UPDATE_SUPPORT_REQUEST: (id) => `api/support-requests/update/${id}`,
+  DELETE_SUPPORT_REQUEST: (id) => `api/support-requests/delete/${id}`,
 };
