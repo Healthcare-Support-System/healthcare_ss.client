@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import togetherImg from "../assets/woman.jpg";
-import hopeImg from "../assets/Hope.jpg";
-import patientImg from "../assets/Patient.jpg";
-import donationBoxesImg from "../assets/DonationBoxes.jpg";
+import togetherImg from "../assets/Apeksha-web-bannerN.jpg";
+import hopeImg from "../assets/Children.jpeg";
+import patientImg from "../assets/LoveLives.jpeg";
+import donationBoxesImg from "../assets/DonateN.jpg";
+import { FaHeart, FaHandsHelping, FaCapsules, FaUserInjured, FaHospital, FaStar ,FaExclamationCircle} from "react-icons/fa";
+
 
 /* ─── tiny hook: trigger class when element enters viewport ─── */
 function useReveal() {
@@ -107,7 +109,11 @@ const Home = () => {
         {/* ── HERO ── */}
         <section className="relative min-h-[92vh] flex items-end overflow-hidden">
           <div className="absolute inset-0">
-            <img src={togetherImg} alt="hero" className="w-full h-full object-cover img-zoom" />
+            <img 
+  src={togetherImg} 
+  alt="hero" 
+  className="w-full h-full object-cover object-center md:object-[center_top] scale-100" 
+/>
           </div>
           <div className="absolute inset-0" style={{
             background: 'linear-gradient(to right, rgba(28,23,51,.85) 0%, rgba(28,23,51,.5) 55%, transparent 100%)'
@@ -123,7 +129,7 @@ const Home = () => {
             <div className="max-w-xl">
               <p className="hero-line badge" style={{ color: '#e8d5f5', background: 'rgba(255,255,255,.12)', borderColor: 'rgba(255,255,255,.25)' }}>
                 <span className="badge-dot" style={{ background: '#F2AABF' }} />
-                Apeksha Hospital · Low-Income Cancer Patients
+               Apeksha Hospital · Bringing Hope to Cancer Patients
               </p>
 
               <h1 className="hero-line mt-6 font-black leading-none text-white"
@@ -134,14 +140,14 @@ const Home = () => {
 
               <p className="hero-line mt-6 text-base md:text-lg leading-relaxed"
                 style={{ color: 'rgba(255,255,255,.75)', maxWidth: '38ch' }}>
-                Your donation provides real relief — medicine, nutrition, transport, and care — for cancer patients facing financial hardship during treatment.
+                Your donation provides real relief — medicine, nutrition, and care — for cancer patients facing financial hardship during treatment.
               </p>
 
               <div className="hero-line mt-10 flex flex-wrap gap-4">
                 <button
                   onClick={() => navigate("/donate")}
                   className="btn-pulse px-8 py-3.5 rounded-full font-semibold text-white transition-all duration-300 hover:scale-105"
-                  style={{ background: 'linear-gradient(135deg, #5E548E 0%, #7B6DB0 100%)', fontSize: '1rem' }}
+                  style={{ background: 'linear-gradient(135deg, #F2AABF 0%, #7B6DB0 100%)', fontSize: '1rem' }}
                 >
                   Donate Now →
                 </button>
@@ -179,7 +185,7 @@ const Home = () => {
               </div>
               {/* floating chip */}
               <div className="absolute -bottom-5 -right-5 bg-white rounded-2xl shadow-xl px-6 py-4 flex items-center gap-3">
-                <span className="text-3xl">💜</span>
+                <FaHeart className="text-3xl text-purple-600" />
                 <div>
                   <p className="font-bold text-sm" style={{ color: '#5E548E' }}>Every rupee matters</p>
                   <p className="text-xs text-gray-500">Directly to patients in need</p>
@@ -195,16 +201,16 @@ const Home = () => {
                 Every contribution brings comfort, care, and hope.
               </h2>
               <p className="mt-5 text-gray-500 leading-relaxed" style={{ fontSize: '1.05rem' }}>
-                Many cancer patients and their families face serious financial hardship during treatment. Your support provides essential medicine, nutrition, accommodation, and urgent medical assistance when it's needed most.
+                Many cancer patients and their families face serious financial hardship during treatment. Your support provides essential medicine, nutrition, and urgent medical assistance when it's needed most.
               </p>
 
               <div className="mt-8 grid sm:grid-cols-2 gap-4">
                 {[
-                  { emoji: '🌸', title: 'Hope', desc: 'Emotional and financial relief for patients and families.', bg: '#f9f4ff', border: '#e5d9f5' },
-                  { emoji: '🤝', title: 'Care', desc: 'Treatment, food, transport, and daily essentials covered.', bg: '#fff4f8', border: '#f5d9e5' },
+                  { icon: <FaHeart />, title: 'Hope', desc: 'Emotional and financial relief for patients and families.', bg: '#f9f4ff', border: '#e5d9f5' },
+                  { icon: <FaHandsHelping />, title: 'Care', desc: 'Treatment, food, transport, and daily essentials covered.', bg: '#fff4f8', border: '#f5d9e5' },
                 ].map(c => (
                   <div key={c.title} className="rounded-2xl p-5" style={{ background: c.bg, border: `1px solid ${c.border}` }}>
-                    <div className="text-2xl mb-2">{c.emoji}</div>
+                    <div className="text-2xl mb-2 text-purple-600">{c.icon}</div>
                     <h3 className="font-bold text-lg" style={{ color: '#5E548E' }}>{c.title}</h3>
                     <p className="mt-1 text-sm text-gray-500 leading-relaxed">{c.desc}</p>
                   </div>
@@ -234,9 +240,9 @@ const Home = () => {
 
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { num: '01', emoji: '💊', title: 'Medical Support', desc: 'Help patients afford chemotherapy, surgeries, medication, and all treatment-related expenses.', accent: '#5E548E' },
-                { num: '02', emoji: '🚑', title: 'Emergency Aid',   desc: 'Provide urgent financial help for critical situations, sudden medical needs, and emergency care.', accent: '#E07EA0' },
-                { num: '03', emoji: '❤️', title: 'Patient Care',    desc: 'Support nutrition, accommodation, travel costs, and day-to-day care for vulnerable patients.', accent: '#9B8EC4' },
+                { icon: <FaCapsules />, title: 'Medical Support', desc: 'Help patients afford chemotherapy, surgeries, medication, and all treatment-related expenses.', accent: '#5E548E' },
+                { icon: <FaExclamationCircle/>, title: 'Emergency Aid', desc: 'Provide urgent financial help for critical situations, sudden medical needs, and emergency care.', accent: '#E07EA0' },
+                { icon: <FaUserInjured />, title: 'Patient Care', desc: 'Support nutrition, accommodation, travel costs, and day-to-day care for vulnerable patients.', accent: '#9B8EC4' }
               ].map(card => (
                 <div key={card.num}
                   className="card-shine relative bg-white rounded-[28px] p-8 cursor-default"
@@ -252,11 +258,11 @@ const Home = () => {
                   <span className="card-num">{card.num}</span>
                   <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-6"
                     style={{ background: `${card.accent}18` }}>
-                    {card.emoji}
+                    <span className="text-xl text-purple-600">{card.icon}</span>
                   </div>
                   <h3 className="text-xl font-bold mb-3" style={{ color: '#1C1733' }}>{card.title}</h3>
                   <p className="text-gray-500 leading-relaxed text-sm">{card.desc}</p>
-                  <p className="mt-6 text-xs font-semibold tracking-wide" style={{ color: card.accent }}>Learn more →</p>
+                  {/* <p className="mt-6 text-xs font-semibold tracking-wide" style={{ color: card.accent }}>Learn more →</p> */}
                 </div>
               ))}
             </div>
@@ -287,7 +293,7 @@ const Home = () => {
               <button
                 onClick={() => navigate("/support-request")}
                 className="mt-8 px-8 py-3.5 rounded-full font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                style={{ background: 'linear-gradient(135deg, #5E548E 0%, #7B6DB0 100%)', fontSize: '1rem' }}
+                style={{ background: 'linear-gradient(135deg, #F2AABF 0%, #7B6DB0 100%)', fontSize: '1rem' }}
               >
                 Support a Patient →
               </button>
@@ -330,24 +336,24 @@ const Home = () => {
 
                 <ul className="mt-8 space-y-4">
                   {[
-                    { icon: '💜', text: 'Support low-income patients directly' },
-                    { icon: '🏥', text: 'Help cover treatment-related needs' },
-                    { icon: '🌟', text: 'Make a real and visible social impact' },
+                    { icon: <FaHeart />, text: 'Support low-income patients directly' },
+                    { icon: <FaHospital />, text: 'Help cover treatment-related needs' },
+                    { icon: <FaStar />, text: 'Make a real and visible social impact' },
                   ].map(item => (
                     <li key={item.text} className="flex items-center gap-4 p-4 rounded-xl bg-white shadow-sm"
                       style={{ border: '1px solid rgba(94,84,142,.1)' }}>
-                      <span className="text-xl">{item.icon}</span>
+                      <span className="text-xl text-purple-600">{item.icon}</span>
                       <span className="font-medium text-gray-700">{item.text}</span>
                     </li>
                   ))}
                 </ul>
 
                 <button
-                  onClick={() => navigate("/support-request")}
+                  onClick={() => navigate("//stories")}
                   className="mt-10 px-8 py-3.5 rounded-full font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"
                   style={{ background: 'linear-gradient(135deg, #5E548E 0%, #7B6DB0 100%)', fontSize: '1rem' }}
                 >
-                  Join Our Community →
+                  See the Stories of Hope →
                 </button>
               </div>
             </div>
@@ -356,7 +362,7 @@ const Home = () => {
 
         {/* ── FINAL CTA ── */}
         <section className="relative overflow-hidden py-28 text-center"
-          style={{ background: 'linear-gradient(135deg, #3D3468 0%, #5E548E 50%, #7B6DB0 100%)' }}>
+          style={{ background: 'linear-gradient(135deg, #ada1eb 0%, #b1aad4 50%, #7B6DB0 100%)' }}>
           {[220, 380, 520].map(s => (
             <div key={s} className="absolute top-1/2 left-1/2 rounded-full pointer-events-none"
               style={{ width: s, height: s, transform: 'translate(-50%,-50%)', border: '1px solid rgba(255,255,255,.08)' }} />
@@ -376,19 +382,19 @@ const Home = () => {
             </p>
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               <button
-                onClick={() => navigate("/support-request")}
+                onClick={() => navigate("/donate")}
                 className="btn-pulse px-10 py-4 rounded-full font-bold text-base transition-all duration-300 hover:scale-105"
-                style={{ background: '#fff', color: '#5E548E' }}
+                style={{ background: 'rgba(234, 181, 215, 0.89)', color: '#5E548E' }}
               >
                 Donate Today →
               </button>
-              <button
+              {/* <button
                 onClick={() => navigate("/about")}
                 className="px-10 py-4 rounded-full font-semibold text-base transition-all duration-300 hover:scale-105"
                 style={{ background: 'rgba(255,255,255,.12)', border: '1px solid rgba(255,255,255,.3)', color: '#fff' }}
               >
                 Our Mission
-              </button>
+              </button> */}
             </div>
           </div>
         </section>
