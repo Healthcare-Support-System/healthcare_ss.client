@@ -11,6 +11,8 @@ import SignIn from "../pages/SignIn";
 import SignUp from "../pages/SignUp";
 import ProtectedRoute from "./protectedRoute";
 import AdminDashboard from "../pages/AdminDashboard";
+// import SocialWorkerDashboard from "../pages/SocialWorkerDashboard";
+import DonorDashboard from "../pages/DonorDashboard";
 import ViewAllSupportRequests from "../pages/supportRequests";
 import AdminHome from "../pages/AdminHome";
 import AllPatients from "../pages/AllPatients";
@@ -44,6 +46,14 @@ export const AppRouter = createBrowserRouter([
         element: <ViewAllSupportRequests />,
       },
 
+      {
+        path: ROUTES.DONOR_DASHBOARD,
+        element: (
+          <ProtectedRoute allowedRoles={["donor"]}>
+            <DonorDashboard />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: ROUTES.ADMIN_DASHBOARD,
         element: (

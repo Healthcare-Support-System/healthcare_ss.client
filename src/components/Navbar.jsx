@@ -188,6 +188,12 @@ import { useAuth } from "../contexts/AuthContext";
 const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const displayName =
+    user?.full_name ||
+    user?.first_name ||
+    user?.name ||
+    localStorage.getItem("donorName") ||
+    "User";
 
   const handleLogout = () => {
     logout();
@@ -241,6 +247,15 @@ const Navbar = () => {
           >
             Donate Us
           </Link>
+
+          {user?.role === "donor" && (
+            <Link
+              to={ROUTES.DONOR_DASHBOARD}
+              className="text-purple-900 hover:underline"
+            >
+              Dashboard
+            </Link>
+          )}
         </div>
 
         <div className="space-x-4">
@@ -262,8 +277,8 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <span className="text-purple-200 font-medium">
-                Hi, {user.email} ({user.role})
+              <span className="text-purple-800 font-medium">
+                Hi, {displayName} ({user.role})
               </span>
 
               <button
