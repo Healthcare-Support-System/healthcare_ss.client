@@ -17,6 +17,8 @@ import AllPatients from "../pages/AllPatients";
 import DonationUsage from "../pages/DonationUsage";
 import MakeRequest from "../pages/MakeRequest";
 import ManageDonationRequests from "../pages/ManageDonationRequest";
+import Donations from "../pages/Donations";
+import ReceivedDonation from "../pages/RecievedDonations";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -93,6 +95,22 @@ export const AppRouter = createBrowserRouter([
             element: (
               <ProtectedRoute allowedRoles={["admin"]}>
                 <ManageDonationRequests />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: ROUTES.DONATIONS,
+            element: (
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <Donations />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: ROUTES.RECEIVED_DONATION,
+            element: (
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <ReceivedDonation />
               </ProtectedRoute>
             ),
           },

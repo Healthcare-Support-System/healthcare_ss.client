@@ -32,6 +32,11 @@ const AdminSidebar = () => {
       path: ROUTES.MANAGE_DONATION_REQUESTS,
       access: ["admin"],
     },
+    {
+      label: "Donations",
+      path: ROUTES.DONATIONS,
+      access: ["admin"],
+    },
   ];
 
   const handleLogout = () => {

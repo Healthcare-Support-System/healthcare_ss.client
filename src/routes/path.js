@@ -16,4 +16,6 @@ export const ROUTES = {
     
     // SUPPORT_REQUEST: "/support-request",
     MANAGE_DONATION_REQUESTS: "/admin/manage-donation-requests",
+    DONATIONS: "/admin/donations",
+    RECEIVED_DONATION : "/admin/donations/received-donations",
 };
