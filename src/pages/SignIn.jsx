@@ -26,7 +26,7 @@ const SignIn = () => {
           const role = response?.user?.role;
 
           if (role === "donor") {
-            localStorage.setItem("donorId", response?.user?.id || "");
+            localStorage.removeItem("donorId");
             localStorage.setItem(
               "donorName",
               response?.user?.full_name ||

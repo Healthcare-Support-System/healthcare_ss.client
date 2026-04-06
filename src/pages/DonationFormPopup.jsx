@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { privateApiClient } from "../api/apiClient";
+import { END_POINTS } from "../api/endPoints";
 
 const DonationFormPopup = ({ isOpen, onClose, requestId, donor }) => {
   const [message, setMessage] = useState("");
@@ -29,11 +30,8 @@ const DonationFormPopup = ({ isOpen, onClose, requestId, donor }) => {
 
     console.log("SENDING:", payload);
 
-    await axios.post(
-      "http://localhost:8000/api/donation-requests",
-      payload
-    );
-
+    await privateApiClient.post(END_POINTS.CREATE_DONATION_REQUEST, payload);
+    
     alert("Donation request submitted!");
     onClose();
 

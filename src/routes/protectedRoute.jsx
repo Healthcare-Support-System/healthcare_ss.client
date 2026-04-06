@@ -11,7 +11,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
 
   if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
     if (user.role === "donor") {
-      return <Navigate to={ROUTES.DONATE} replace />;
+      return <Navigate to={ROUTES.DONOR_DASHBOARD} replace />;
     }
 
     if (user.role === "admin") {

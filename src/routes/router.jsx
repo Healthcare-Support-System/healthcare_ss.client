@@ -12,6 +12,7 @@ import SignUp from "../pages/SignUp";
 import ProtectedRoute from "./protectedRoute";
 import AdminDashboard from "../pages/AdminDashboard";
 import SocialWorkerDashboard from "../pages/SocialWorkerDashboard";
+import DonorDashboard from "../pages/DonorDashboard";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -33,6 +34,14 @@ export const AppRouter = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["donor"]}>
             <DonateUs />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: ROUTES.DONOR_DASHBOARD,
+        element: (
+          <ProtectedRoute allowedRoles={["donor"]}>
+            <DonorDashboard />
           </ProtectedRoute>
         ),
       },
