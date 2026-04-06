@@ -79,7 +79,7 @@ const SignIn = () => {
           navigate(ROUTES.SOCIAL_WORKER_DASHBOARD);
         else navigate(ROUTES.HOME);
           if (role === "donor") {
-            localStorage.setItem("donorId", response?.user?.id || "");
+            localStorage.removeItem("donorId");
             localStorage.setItem(
               "donorName",
               response?.user?.full_name ||
