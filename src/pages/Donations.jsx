@@ -31,6 +31,102 @@ const inlineStyle = `
     font-family: 'DM Sans', sans-serif;
   }
   .don-select:focus { outline: none; box-shadow: 0 0 0 2px rgba(94,84,142,0.15); }
+
+  .don-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(34, 25, 51, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 16px;
+  }
+
+  .don-modal {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    border: 1px solid #F0E5E8;
+    border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(94, 84, 142, 0.18);
+    overflow: hidden;
+  }
+
+  .don-modal-header {
+    padding: 16px 18px 10px;
+    border-bottom: 1px solid #F7ECEF;
+  }
+
+  .don-modal-body {
+    padding: 14px 18px 18px;
+  }
+
+  .don-modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #5E548E;
+    margin: 0;
+  }
+
+  .don-modal-text {
+    font-size: 13px;
+    color: #6b6480;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .don-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 0 18px 18px;
+  }
+
+  .don-btn-secondary {
+    border: 1px solid #F0E5E8;
+    background: white;
+    color: #5E548E;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .don-btn-secondary:hover {
+    background: #FDF5F7;
+  }
+
+  .don-btn-primary {
+    border: none;
+    background: #5E548E;
+    color: white;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .don-btn-primary:hover {
+    background: #4c4474;
+  }
+
+  .don-btn-danger {
+    border: none;
+    background: #E5989B;
+    color: white;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .don-btn-danger:hover {
+    background: #d98489;
+  }
 `;
 
 const STATUS_MAP = {
@@ -63,7 +159,7 @@ const IconHeart = ({ size = 12 }) => (
   </svg>
 );
 
-/* Stat card — compact */
+
 const StatCard = ({ label, value, valueClass = "text-[#5E548E]" }) => (
   <div className="flex flex-col gap-0.5 bg-white border border-[#F0E5E8] rounded-xl px-4 py-3 shadow-sm min-w-[90px]">
     <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-[#B5838D]">{label}</span>
@@ -80,19 +176,48 @@ const TH = ({ children, center = false }) => (
   </th>
 );
 
-/* ════════════════════════════════════════ */
+
 const Donations = () => {
   const navigate = useNavigate();
   const [donations, setDonations] = useState([]);
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState("");
+  const [popup, setPopup]         = useState({
+    open: false,
+    title: "",
+    message: "",
+    type: "info",
+    onConfirm: null,
+  });
+
+  const showPopup = ({ title, message, type = "info", onConfirm = null }) => {
+    setPopup({ open: true, title, message, type, onConfirm });
+  };
+
+  const closePopup = () => {
+    setPopup({
+      open: false,
+      title: "",
+      message: "",
+      type: "info",
+      onConfirm: null,
+    });
+  };
 
   useEffect(() => { fetchDonations(); }, []);
 
   const fetchDonations = async () => {
     try {
-      setLoading(true); setError("");
+      setLoading(true); 
+      setError("");
+
+      // Validation: make sure authentication token exists before calling the API.
       const token = localStorage.getItem("token");
+      if (!token) {
+        setError("Your session has expired. Please sign in again.");
+        return;
+      }
+
       const response = await axios.get(
         `${API_BASE_URL}${END_POINTS.GET_ALL_DONATIONS}`,
         { headers: { Authorization: `Bearer ${token}` } }
@@ -104,22 +229,86 @@ const Donations = () => {
     } finally { setLoading(false); }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this donation?")) return;
+  const performDelete = async (id) => {
     try {
+      // Validation: make sure authentication token exists before deleting.
       const token = localStorage.getItem("token");
+      if (!token) {
+        showPopup({
+          title: "Session Expired",
+          message: "Your session has expired. Please sign in again to continue.",
+          type: "error",
+        });
+        return;
+      }
+
       await axios.delete(`${API_BASE_URL}${END_POINTS.DELETE_DONATION(id)}`,
         { headers: { Authorization: `Bearer ${token}` } });
       setDonations((prev) => prev.filter((d) => d._id !== id));
+      closePopup();
     } catch (err) {
       console.error("Error deleting donation:", err);
-      alert(err.response?.data?.message || "Failed to delete donation");
+      showPopup({
+        title: "Delete Failed",
+        message: err.response?.data?.message || "Failed to delete donation",
+        type: "error",
+      });
     }
   };
 
+  const handleDelete = async (id) => {
+    // Validation: make sure a valid donation id is available before delete action.
+    if (!id) {
+      showPopup({
+        title: "Invalid Donation",
+        message: "The selected donation could not be identified.",
+        type: "error",
+      });
+      return;
+    }
+
+    showPopup({
+      title: "Delete Donation",
+      message: "Are you sure you want to delete this donation? This action cannot be undone.",
+      type: "confirm",
+      onConfirm: () => performDelete(id),
+    });
+  };
+
   const handleStatusUpdate = async (id, newStatus) => {
+    // Validation: ensure donation id exists before updating status.
+    if (!id) {
+      showPopup({
+        title: "Invalid Donation",
+        message: "The selected donation could not be identified.",
+        type: "error",
+      });
+      return;
+    }
+
+    // Validation: allow only supported donation statuses.
+    const allowedStatuses = ["received", "allocated", "used", "completed"];
+    if (!allowedStatuses.includes(newStatus)) {
+      showPopup({
+        title: "Invalid Status",
+        message: "The selected donation status is not valid.",
+        type: "error",
+      });
+      return;
+    }
+
     try {
+      // Validation: make sure authentication token exists before updating status.
       const token = localStorage.getItem("token");
+      if (!token) {
+        showPopup({
+          title: "Session Expired",
+          message: "Your session has expired. Please sign in again to continue.",
+          type: "error",
+        });
+        return;
+      }
+
       const response = await axios.put(
         `${API_BASE_URL}${END_POINTS.UPDATE_DONATION_STATUS(id)}`,
         { donation_status: newStatus },
@@ -128,7 +317,11 @@ const Donations = () => {
       setDonations((prev) => prev.map((d) => (d._id === id ? response.data.data : d)));
     } catch (err) {
       console.error("Error updating donation status:", err);
-      alert(err.response?.data?.message || "Failed to update donation status");
+      showPopup({
+        title: "Update Failed",
+        message: err.response?.data?.message || "Failed to update donation status",
+        type: "error",
+      });
     }
   };
 
@@ -139,6 +332,38 @@ const Donations = () => {
   return (
     <>
       <style>{inlineStyle}</style>
+
+      {popup.open && (
+        <div className="don-modal-overlay">
+          <div className="don-modal">
+            <div className="don-modal-header">
+              <h3 className="don-modal-title">{popup.title}</h3>
+            </div>
+            <div className="don-modal-body">
+              <p className="don-modal-text">{popup.message}</p>
+            </div>
+            <div className="don-modal-actions">
+              {popup.type === "confirm" ? (
+                <>
+                  <button className="don-btn-secondary" onClick={closePopup}>
+                    Cancel
+                  </button>
+                  <button
+                    className="don-btn-danger"
+                    onClick={() => popup.onConfirm && popup.onConfirm()}
+                  >
+                    Delete
+                  </button>
+                </>
+              ) : (
+                <button className="don-btn-primary" onClick={closePopup}>
+                  OK
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 
         Use p-5 (20px) to match the original page padding.
