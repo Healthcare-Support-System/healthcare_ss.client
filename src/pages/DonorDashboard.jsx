@@ -4,6 +4,7 @@ import { privateApiClient } from "../api/apiClient";
 import { END_POINTS } from "../api/endPoints";
 import { useAuth } from "../contexts/AuthContext";
 import { ROUTES } from "../routes/path";
+import jsPDF from "jspdf";
 
 /* ─── Static Data ────────────────────────────────────────── */
 const emptyForm = {
@@ -63,6 +64,165 @@ function getInitials(profile) {
 
 function getDonationEntryId(entry) {
   return entry?._id || entry?.id || entry?.donation_request_id || null;
+}
+
+function generateDonationSummary(entry, profile) {
+  const doc = new jsPDF();
+  
+  // Colors
+  const primaryColor = [94, 84, 142]; // Plum color
+  const secondaryColor = [229, 152, 155]; // Rose color
+  const textColor = [26, 22, 37]; // Dark ink
+  const lightGray = [248, 244, 246]; // Light background
+  
+  // Add subtle watermark
+  doc.setTextColor(240, 240, 240);
+  doc.setFontSize(60);
+  doc.setFont("helvetica", "bold");
+  doc.text("Suwa Saviya", 105, 150, { angle: 45, align: "center" });
+  
+  // Header
+  doc.setTextColor(...primaryColor);
+  doc.setFontSize(24);
+  doc.setFont("helvetica", "bold");
+  doc.text("SUWA SAVIYA FOUNDATION", 105, 25, { align: "center" });
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(...textColor);
+  doc.text("Together, We Care, Together, We Cure", 105, 35, { align: "center" });
+  
+  doc.setFontSize(10);
+  doc.text("Mahela Jayawardena Mawatha, Maharagama 10280", 105, 42, { align: "center" });
+  doc.text("Phone: +94 11 123 4567 | Email: info@suwaviya.org", 105, 48, { align: "center" });
+  
+  // Pdf title
+  doc.setDrawColor(...primaryColor);
+  doc.setLineWidth(0.5);
+  doc.line(20, 55, 190, 55);
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...primaryColor);
+  doc.text("DONATION ITEMS SUMMARY", 105, 72, { align: "center" });
+  
+  // PDF details
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(...textColor);
+  doc.text(`Reference No: ${entry?.reference_code || 'N/A'}`, 20, 80);
+  doc.text(`Date: ${formatDate(entry?.created_at)}`, 20, 87);
+  doc.text(`Approved Date: ${entry?.accepted_at ? formatDate(entry.accepted_at) : 'N/A'}`, 20, 94);
+  
+  // Donor information box
+  doc.setFillColor(...lightGray);
+  doc.rect(20, 105, 170, 25, 'F');
+  doc.setDrawColor(...primaryColor);
+  doc.setLineWidth(0.2);
+  doc.rect(20, 105, 170, 25);
+  
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...primaryColor);
+  doc.text("DONOR INFORMATION", 25, 113);
+  
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(...textColor);
+  doc.text(`Name: ${profile?.first_name || ''} ${profile?.last_name || ''}`, 25, 120);
+  doc.text(`Email: ${profile?.email || ''}`, 25, 126);
+  doc.text(`Phone: ${entry?.phone || ''}`, 120, 126);
+  
+  // Support request details
+  const supportRequest = entry?.request_id && typeof entry.request_id === "object" ? entry.request_id : null;
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...primaryColor);
+  doc.text("SUPPORT REQUEST DETAILS", 20, 140);
+  
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(...textColor);
+  let y = 148;
+  doc.text(`Request Type: ${supportRequest?.request_type || supportRequest?.title || 'Support request'}`, 20, y);
+  y += 6;
+  doc.text(`Description: ${supportRequest?.description || 'No description'}`, 20, y);
+  
+  // Items table
+  const requestItems = Array.isArray(supportRequest?.items) ? supportRequest.items : [];
+  if (requestItems.length > 0) {
+    y += 15;
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...primaryColor);
+    doc.text("ITEMS SUMMARY", 20, y);
+    
+    // Table header
+    y += 8;
+    doc.setFillColor(...primaryColor);
+    doc.rect(20, y-3, 170, 8, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "bold");
+    doc.text("Item Description", 25, y+2);
+    doc.text("Quantity", 120, y+2);
+    doc.text("Est. Value (Rs.)", 150, y+2);
+    
+    // Table rows
+    doc.setTextColor(...textColor);
+    doc.setFont("helvetica", "normal");
+    y += 8;
+    
+    requestItems.forEach((item, idx) => {
+      const fillColor = idx % 2 === 0 ? lightGray : [255, 255, 255];
+      doc.setFillColor(...fillColor);
+      doc.rect(20, y-3, 170, 8, 'F');
+      doc.setDrawColor(200, 200, 200);
+      doc.setLineWidth(0.1);
+      doc.rect(20, y-3, 170, 8);
+      
+      doc.text(item?.item_name || 'Unnamed item', 25, y+2);
+      doc.text(`${item?.quantity || 'N/A'} ${item?.unit || ''}`, 120, y+2);
+      doc.text(`${item?.estimated_value || 'N/A'}`, 150, y+2);
+      y += 8;
+    });
+  }
+  
+  // Verification section
+  y += 10;
+  doc.setDrawColor(...primaryColor);
+  doc.setLineWidth(0.5);
+  doc.line(20, y, 190, y);
+  
+  y += 10;
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...primaryColor);
+  doc.text("DONATION SUMMARY", 105, y, { align: "center" });
+  
+  y += 8;
+  doc.setFontSize(8);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(...textColor);
+  doc.text("This document provides a summary of your donation.", 105, y, { align: "center" });
+  y += 5;
+  doc.text("All donations are used for healthcare support and medical assistance programs.", 105, y, { align: "center" });
+  
+  // Footer
+  y = 270;
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "italic");
+  doc.setTextColor(...secondaryColor);
+  doc.text("Thank you for your generous support in making a difference in healthcare!", 105, y, { align: "center" });
+  
+  y += 6;
+  doc.setFontSize(8);
+  doc.setTextColor(100, 100, 100);
+  doc.text("Suwa Saviya Foundation - Registered Charity Organization", 105, y, { align: "center" });
+  doc.text("www.suwaviya.org | contact@suwaviya.org", 105, y+5, { align: "center" });
+  
+  // Save the PDF
+  doc.save(`donation_summary_${entry?.reference_code || 'ref'}.pdf`);
 }
 
 /* ─── Styles ─────────────────────────────────────────────── */
@@ -1007,8 +1167,7 @@ const DonorDashboard = () => {
     setProfileErrorMessage("");
     try {
       const { data } = await privateApiClient.get(END_POINTS.GET_DONOR_PROFILE);
-      // Fetch the donor's latest saved profile from the backend and push it into local state.
-      // `syncProfileState` keeps the display view and the edit form aligned with the same source of truth.
+      // Fetch the donor's latest saved profile 
       syncProfileState(data);
     } catch (error) {
       setProfileErrorMessage(error?.response?.data?.message || "We could not load your donor profile right now.");
@@ -1021,13 +1180,11 @@ const DonorDashboard = () => {
 
   const fetchDonationHistory = useCallback(async () => {
     // Donation history belongs to the logged-in donor, so we cannot request it until the profile id exists.
-    // If the id is missing, reset the list to avoid showing stale history from an older session.
     if (!profile?.id) { setDonationHistory([]); return; }
     setIsHistoryLoading(true);
     setHistoryErrorMessage("");
     try {
       const { data } = await privateApiClient.get(`${END_POINTS.GET_DONOR_DONATION_REQUESTS}/${profile.id}`);
-      // The API should return an array of requests; fallback to an empty list if the payload is malformed.
       setDonationHistory(Array.isArray(data) ? data : []);
     } catch (error) {
       setHistoryErrorMessage(error?.response?.data?.message || "Unable to load your donation history right now.");
@@ -1037,8 +1194,6 @@ const DonorDashboard = () => {
   }, [profile?.id]);
 
   useEffect(() => {
-    // Fetch history only when the History tab is active.
-    // This avoids an unnecessary API call during the initial dashboard load.
     if (activeTab === "history" && profile?.id) fetchDonationHistory();
   }, [activeTab, fetchDonationHistory, profile?.id]);
 
@@ -1312,14 +1467,14 @@ const DonorDashboard = () => {
               </div>
               <div className="dd-nav-divider" />
               <div className="dd-nav-section">
-                <button
+                {/* <button
                   type="button"
                   className="dd-nav-item dd-nav-danger"
                   onClick={() => { logout(); navigate(ROUTES.SIGNIN, { replace: true }); }}
                 >
                   <svg className="dd-nav-icon" viewBox="0 0 20 20"><path d="M13.5 10.5l3-3-3-3M16.5 7.5H7" /><path d="M10 3.5H4.5A1.5 1.5 0 003 5v10a1.5 1.5 0 001.5 1.5H10" /></svg>
                   Sign out
-                </button>
+                </button> */}
               </div>
             </nav>
             <div className="dd-sidebar-info">
@@ -1662,6 +1817,15 @@ const DonorDashboard = () => {
                             </button>
                             <button type="button" onClick={() => handleDonationDeleteStart(entry)} className="btn btn-danger btn-sm">
                               Delete request
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Approved actions */}
+                        {entry?.status === "accepted" && (
+                          <div className="dd-entry-actions">
+                            <button type="button" onClick={() => generateDonationSummary(entry, profile)} className="btn btn-primary btn-sm">
+                              Download
                             </button>
                           </div>
                         )}
