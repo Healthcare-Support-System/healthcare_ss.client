@@ -114,9 +114,9 @@ const AdminSidebar = () => {
                 </svg>
               </div>
               <div>
-                <p className="text-[13px] font-bold text-[#5E548E] leading-tight">HOPE</p>
-                <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#B5838D] leading-tight">
-                  Cancer Support
+                <p className="text-[13px] font-bold text-[#5E548E] leading-tight">සුව සවිය</p>
+                <p className="text-[8px] italic font-medium tracking-[0.08em] text-[#B5838D] leading-tight">
+                  Together we care, together we cure
                 </p>
               </div>
             </div>
