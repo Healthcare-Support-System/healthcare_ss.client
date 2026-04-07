@@ -14,8 +14,8 @@ const inlineStyle = `
   @keyframes don-spin { to { transform: rotate(360deg); } }
   .don-spinner {
     width: 16px; height: 16px; flex-shrink: 0;
-    border: 2px solid #F0E5E8;
-    border-top-color: #5E548E;
+    border: 2px solid #E2CDD3;
+    border-top-color: #4A3F7A;
     border-radius: 50%;
     animation: don-spin 0.75s linear infinite;
   }
@@ -23,19 +23,19 @@ const inlineStyle = `
   .don-select {
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%235E548E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%234A3F7A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 8px center;
     padding-right: 26px !important;
     cursor: pointer;
     font-family: 'DM Sans', sans-serif;
   }
-  .don-select:focus { outline: none; box-shadow: 0 0 0 2px rgba(94,84,142,0.15); }
+  .don-select:focus { outline: none; box-shadow: 0 0 0 2px rgba(74,63,122,0.2); }
 
   .don-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(34, 25, 51, 0.35);
+    background: rgba(28, 20, 45, 0.45);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,15 +47,15 @@ const inlineStyle = `
     width: 100%;
     max-width: 420px;
     background: white;
-    border: 1px solid #F0E5E8;
+    border: 1px solid #E2CDD3;
     border-radius: 18px;
-    box-shadow: 0 20px 50px rgba(94, 84, 142, 0.18);
+    box-shadow: 0 20px 50px rgba(74, 63, 122, 0.22);
     overflow: hidden;
   }
 
   .don-modal-header {
     padding: 16px 18px 10px;
-    border-bottom: 1px solid #F7ECEF;
+    border-bottom: 1px solid #EDD8DE;
   }
 
   .don-modal-body {
@@ -65,13 +65,13 @@ const inlineStyle = `
   .don-modal-title {
     font-size: 16px;
     font-weight: 700;
-    color: #5E548E;
+    color: #4A3F7A;
     margin: 0;
   }
 
   .don-modal-text {
     font-size: 13px;
-    color: #6b6480;
+    color: #5a5070;
     line-height: 1.6;
     margin: 0;
   }
@@ -84,9 +84,9 @@ const inlineStyle = `
   }
 
   .don-btn-secondary {
-    border: 1px solid #F0E5E8;
+    border: 1px solid #E2CDD3;
     background: white;
-    color: #5E548E;
+    color: #4A3F7A;
     border-radius: 12px;
     padding: 9px 14px;
     font-size: 12.5px;
@@ -95,12 +95,12 @@ const inlineStyle = `
   }
 
   .don-btn-secondary:hover {
-    background: #FDF5F7;
+    background: #F7EBF0;
   }
 
   .don-btn-primary {
     border: none;
-    background: #5E548E;
+    background: #4A3F7A;
     color: white;
     border-radius: 12px;
     padding: 9px 14px;
@@ -110,12 +110,12 @@ const inlineStyle = `
   }
 
   .don-btn-primary:hover {
-    background: #4c4474;
+    background: #3a3062;
   }
 
   .don-btn-danger {
     border: none;
-    background: #E5989B;
+    background: #C9686B;
     color: white;
     border-radius: 12px;
     padding: 9px 14px;
@@ -125,15 +125,15 @@ const inlineStyle = `
   }
 
   .don-btn-danger:hover {
-    background: #d98489;
+    background: #b85558;
   }
 `;
 
 const STATUS_MAP = {
-  received:  { bg: "bg-slate-100",  text: "text-slate-600"   },
-  allocated: { bg: "bg-purple-50",  text: "text-purple-700"  },
-  used:      { bg: "bg-rose-50",    text: "text-rose-600"    },
-  completed: { bg: "bg-emerald-50", text: "text-emerald-700" },
+  received:  { bg: "bg-slate-200",   text: "text-slate-700"   },
+  allocated: { bg: "bg-purple-100",  text: "text-purple-800"  },
+  used:      { bg: "bg-rose-100",    text: "text-rose-700"    },
+  completed: { bg: "bg-emerald-100", text: "text-emerald-800" },
 };
 
 const IconPlus = () => (
@@ -160,17 +160,17 @@ const IconHeart = ({ size = 12 }) => (
 );
 
 
-const StatCard = ({ label, value, valueClass = "text-[#5E548E]" }) => (
-  <div className="flex flex-col gap-0.5 bg-white border border-[#F0E5E8] rounded-xl px-4 py-3 shadow-sm min-w-[90px]">
-    <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-[#B5838D]">{label}</span>
+const StatCard = ({ label, value, valueClass = "text-[#4A3F7A]" }) => (
+  <div className="flex flex-col gap-0.5 bg-white border border-[#E2CDD3] rounded-xl px-4 py-3 shadow-sm min-w-[90px]">
+    <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-[#9A5F6A]">{label}</span>
     <span className={`text-xl font-bold leading-tight ${valueClass}`}>{value}</span>
   </div>
 );
 
 /* Table header cell */
 const TH = ({ children, center = false }) => (
-  <th className={`px-3 py-3 text-[10px] font-bold uppercase tracking-[0.1em] text-[#5E548E]
-    border-b border-[#F0E5E8] whitespace-nowrap bg-[#FDF5F7]
+  <th className={`px-3 py-3 text-[10px] font-bold uppercase tracking-[0.1em] text-[#4A3F7A]
+    border-b border-[#E2CDD3] whitespace-nowrap bg-[#F7EBF0]
     ${center ? "text-center" : "text-left"}`}>
     {children}
   </th>
@@ -211,7 +211,6 @@ const Donations = () => {
       setLoading(true); 
       setError("");
 
-      // Validation: make sure authentication token exists before calling the API.
       const token = localStorage.getItem("token");
       if (!token) {
         setError("Your session has expired. Please sign in again.");
@@ -231,7 +230,6 @@ const Donations = () => {
 
   const performDelete = async (id) => {
     try {
-      // Validation: make sure authentication token exists before deleting.
       const token = localStorage.getItem("token");
       if (!token) {
         showPopup({
@@ -257,7 +255,6 @@ const Donations = () => {
   };
 
   const handleDelete = async (id) => {
-    // Validation: make sure a valid donation id is available before delete action.
     if (!id) {
       showPopup({
         title: "Invalid Donation",
@@ -276,7 +273,6 @@ const Donations = () => {
   };
 
   const handleStatusUpdate = async (id, newStatus) => {
-    // Validation: ensure donation id exists before updating status.
     if (!id) {
       showPopup({
         title: "Invalid Donation",
@@ -286,7 +282,6 @@ const Donations = () => {
       return;
     }
 
-    // Validation: allow only supported donation statuses.
     const allowedStatuses = ["received", "allocated", "used", "completed"];
     if (!allowedStatuses.includes(newStatus)) {
       showPopup({
@@ -298,7 +293,6 @@ const Donations = () => {
     }
 
     try {
-      // Validation: make sure authentication token exists before updating status.
       const token = localStorage.getItem("token");
       if (!token) {
         showPopup({
@@ -365,32 +359,28 @@ const Donations = () => {
         </div>
       )}
 
-      {/* 
-        Use p-5 (20px) to match the original page padding.
-        No min-h-screen width constraints — let the parent layout control width.
-      */}
-      <div className="don-root bg-[#FFF9F5] min-h-screen p-5">
+      <div className="don-root bg-[#FDF4F6] min-h-screen p-5">
 
         {/* ── Header ── */}
         <div className="flex items-start justify-between mb-5">
           <div>
-            <div className="flex items-center gap-1 text-[#B5838D] mb-1.5">
+            <div className="flex items-center gap-1 text-[#9A5F6A] mb-1.5">
               <IconHeart size={11} />
               <span className="text-[9.5px] font-bold uppercase tracking-[0.14em]">
                 Cancer Support Fund
               </span>
             </div>
-            <h1 className="text-xl font-bold text-[#5E548E] leading-tight">
+            <h1 className="text-xl font-bold text-[#4A3F7A] leading-tight">
               Donation Records
             </h1>
-            <p className="text-[11.5px] text-[#B5838D] mt-0.5">
+            <p className="text-[11.5px] text-[#9A5F6A] mt-0.5">
               View, manage, and track all incoming donation entries
             </p>
           </div>
 
           <button
             onClick={() => navigate(ROUTES.RECEIVED_DONATION)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-[#5E548E] hover:bg-[#E5989B]
+            className="flex items-center gap-1.5 px-4 py-2 bg-[#4A3F7A] hover:bg-[#D4737A]
               text-white text-[12.5px] font-semibold rounded-xl shadow
               transition-all duration-200 active:scale-95 whitespace-nowrap"
           >
@@ -403,17 +393,17 @@ const Donations = () => {
         {!loading && !error && total > 0 && (
           <div className="flex items-stretch gap-2.5 mb-5">
             <StatCard label="Total Donations" value={total} />
-            <StatCard label="Allocated"       value={allocated} valueClass="text-purple-700" />
-            <StatCard label="Completed"       value={completed} valueClass="text-emerald-700" />
+            <StatCard label="Allocated"       value={allocated} valueClass="text-purple-800" />
+            <StatCard label="Completed"       value={completed} valueClass="text-emerald-800" />
           </div>
         )}
 
         {/* ── Divider ── */}
-        <div className="border-t border-[#F0E5E8] mb-5" />
+        <div className="border-t border-[#E2CDD3] mb-5" />
 
         {/* ── Loading ── */}
         {loading && (
-          <div className="flex items-center gap-2.5 py-4 text-[13px] font-medium text-[#5E548E]">
+          <div className="flex items-center gap-2.5 py-4 text-[13px] font-medium text-[#4A3F7A]">
             <div className="don-spinner" />
             Loading donation records…
           </div>
@@ -421,8 +411,8 @@ const Donations = () => {
 
         {/* ── Error ── */}
         {error && (
-          <div className="bg-rose-50 border border-rose-200 border-l-4 border-l-[#B5838D]
-            rounded-xl px-3.5 py-2.5 mb-4 text-rose-700 text-[12.5px]">
+          <div className="bg-rose-50 border border-rose-300 border-l-4 border-l-[#9A5F6A]
+            rounded-xl px-3.5 py-2.5 mb-4 text-rose-800 text-[12.5px]">
             {error}
           </div>
         )}
@@ -430,18 +420,18 @@ const Donations = () => {
         {/* ── Empty State ── */}
         {!loading && !error && total === 0 && (
           <div className="flex flex-col items-center justify-center py-16 gap-2.5">
-            <div className="w-12 h-12 rounded-xl bg-[#FDF5F7] border border-[#F0E5E8]
-              flex items-center justify-center text-[#B5838D]">
+            <div className="w-12 h-12 rounded-xl bg-[#F7EBF0] border border-[#E2CDD3]
+              flex items-center justify-center text-[#9A5F6A]">
               <IconHeart size={20} />
             </div>
-            <p className="text-[13.5px] font-semibold text-[#5E548E]">No donations found</p>
-            <p className="text-[12px] text-[#B5838D]">Add a received donation to get started.</p>
+            <p className="text-[13.5px] font-semibold text-[#4A3F7A]">No donations found</p>
+            <p className="text-[12px] text-[#9A5F6A]">Add a received donation to get started.</p>
           </div>
         )}
 
         {/* ── Table ── */}
         {!loading && !error && total > 0 && (
-          <div className="bg-white border border-[#F0E5E8] rounded-2xl overflow-hidden shadow-sm">
+          <div className="bg-white border border-[#E2CDD3] rounded-2xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-[12.5px] border-collapse">
                 <thead>
@@ -464,40 +454,40 @@ const Donations = () => {
                     return (
                       <tr
                         key={donation._id}
-                        className={`border-b border-[#F0E5E8] hover:bg-[#FFF9F5]
+                        className={`border-b border-[#E2CDD3] hover:bg-[#FDF4F6]
                           transition-colors duration-100
                           ${idx === total - 1 ? "border-b-0" : ""}`}
                       >
                         {/* # */}
-                        <td className="px-3 py-2.5 text-[#B5838D] text-[11.5px] font-medium w-8">
+                        <td className="px-3 py-2.5 text-[#9A5F6A] text-[11.5px] font-medium w-8">
                           {idx + 1}
                         </td>
 
                         {/* Reference Code */}
                         <td className="px-3 py-2.5">
                           {donation.reference_code ? (
-                            <span className="inline-flex items-center bg-[#FDF5F7] border border-[#F0E5E8]
-                              text-[#5E548E] text-[11px] font-semibold px-2 py-0.5 rounded-full tracking-wide">
+                            <span className="inline-flex items-center bg-[#F7EBF0] border border-[#E2CDD3]
+                              text-[#4A3F7A] text-[11px] font-semibold px-2 py-0.5 rounded-full tracking-wide">
                               {donation.reference_code}
                             </span>
-                          ) : <span className="text-[#E8D9DE]">—</span>}
+                          ) : <span className="text-[#D4B8C0]">—</span>}
                         </td>
 
                         {/* Donation Type */}
                         <td className="px-3 py-2.5">
                           {donation.donation_type ? (
-                            <span className="inline-block bg-[#F0EBF8] text-[#5E548E]
+                            <span className="inline-block bg-[#EAE3F5] text-[#4A3F7A]
                               text-[11.5px] font-medium px-2 py-0.5 rounded-md">
                               {donation.donation_type}
                             </span>
-                          ) : <span className="text-[#E8D9DE]">—</span>}
+                          ) : <span className="text-[#D4B8C0]">—</span>}
                         </td>
 
                         {/* Status */}
                         <td className="px-3 py-2.5">
                           <select
                             className={`don-select text-[11.5px] font-semibold px-2.5 py-1
-                              rounded-lg border border-[#F0E5E8] transition-all duration-150
+                              rounded-lg border border-[#E2CDD3] transition-all duration-150
                               ${sc.bg} ${sc.text}`}
                             value={status}
                             onChange={(e) => handleStatusUpdate(donation._id, e.target.value)}
@@ -510,25 +500,25 @@ const Donations = () => {
                         </td>
 
                         {/* Date */}
-                        <td className="px-3 py-2.5 text-[#6b6480] tabular-nums">
+                        <td className="px-3 py-2.5 text-[#5a5070] tabular-nums">
                           {donation.received_date
                             ? new Date(donation.received_date).toLocaleDateString("en-GB", {
                                 day: "2-digit", month: "short", year: "numeric",
                               })
-                            : <span className="text-[#E8D9DE]">—</span>}
+                            : <span className="text-[#D4B8C0]">—</span>}
                         </td>
 
                         {/* Donor */}
-                        <td className="px-3 py-2.5 font-medium text-[#3a3248] max-w-[160px]">
+                        <td className="px-3 py-2.5 font-medium text-[#2e2840] max-w-[160px]">
                           <span className="block truncate">
                             {donation.donor_id?.name || donation.donor_id?._id
-                              || <span className="text-[#E8D9DE]">—</span>}
+                              || <span className="text-[#D4B8C0]">—</span>}
                           </span>
                         </td>
 
                         {/* Remarks */}
                         <td className="px-3 py-2.5 max-w-[140px]">
-                          <span className="block text-[#B5838D] italic text-[12px] truncate"
+                          <span className="block text-[#9A5F6A] italic text-[12px] truncate"
                             title={donation.remarks}>
                             {donation.remarks || "—"}
                           </span>
@@ -539,9 +529,9 @@ const Donations = () => {
                           <button
                             onClick={() => handleDelete(donation._id)}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5
-                              text-[11.5px] font-medium text-[#B5838D]
-                              bg-transparent border border-[#F0E5E8] rounded-lg
-                              hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200
+                              text-[11.5px] font-medium text-[#9A5F6A]
+                              bg-transparent border border-[#E2CDD3] rounded-lg
+                              hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300
                               transition-all duration-150 active:scale-95"
                           >
                             <IconTrash />
@@ -556,14 +546,14 @@ const Donations = () => {
             </div>
 
             {/* Footer */}
-            <div className="px-4 py-2.5 bg-[#FDF5F7] border-t border-[#F0E5E8]
+            <div className="px-4 py-2.5 bg-[#F7EBF0] border-t border-[#E2CDD3]
               flex items-center justify-between">
-              <span className="text-[11px] text-[#B5838D]">
+              <span className="text-[11px] text-[#9A5F6A]">
                 Showing{" "}
-                <span className="font-semibold text-[#5E548E]">{total}</span>{" "}
+                <span className="font-semibold text-[#4A3F7A]">{total}</span>{" "}
                 record{total !== 1 ? "s" : ""}
               </span>
-              <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-[#E8D9DE]">
+              <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-[#D4B8C0]">
                 Cancer Support Fund
               </span>
             </div>

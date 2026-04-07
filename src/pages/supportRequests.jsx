@@ -89,16 +89,28 @@ const ViewAllSupportRequests = () => {
 
   /* ── urgency config ── */
   const urgencyConfig = {
-    high:   { pill: "bg-rose-50 text-rose-600 border border-rose-200",   dot: "bg-rose-500",   label: "High"   },
-    medium: { pill: "bg-amber-50 text-amber-700 border border-amber-200", dot: "bg-amber-400",  label: "Medium" },
-    low:    { pill: "bg-emerald-50 text-emerald-700 border border-emerald-200", dot: "bg-emerald-500", label: "Low" },
+    high: {
+      pill: "bg-red-50 text-red-700 border border-red-200",
+      dot:  "bg-red-500",
+      label: "High",
+    },
+    medium: {
+      pill: "bg-amber-50 text-amber-800 border border-amber-300",
+      dot:  "bg-amber-500",
+      label: "Medium",
+    },
+    low: {
+      pill: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+      dot:  "bg-emerald-500",
+      label: "Low",
+    },
   };
 
   const statusConfig = {
-    open:       { pill: "bg-purple-50 text-purple-700", label: "Open"       },
-    pending:    { pill: "bg-amber-50 text-amber-700",   label: "Pending"    },
-    fulfilled:  { pill: "bg-emerald-50 text-emerald-700", label: "Fulfilled" },
-    closed:     { pill: "bg-slate-100 text-slate-500",  label: "Closed"     },
+    open:      { pill: "bg-[#eee8ff] text-[#4a2999]",   label: "Open"      },
+    pending:   { pill: "bg-amber-50 text-amber-800",     label: "Pending"   },
+    fulfilled: { pill: "bg-emerald-50 text-emerald-700", label: "Fulfilled" },
+    closed:    { pill: "bg-slate-100 text-slate-500",    label: "Closed"    },
   };
 
   const getUrgency = (u) => urgencyConfig[(u || "").toLowerCase()] || urgencyConfig.low;
@@ -108,12 +120,22 @@ const ViewAllSupportRequests = () => {
   if (loading) {
     return (
       <>
-        <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap'); @keyframes sp{to{transform:rotate(360deg)}}`}</style>
-        <div className="min-h-screen bg-[#FFF9F5] flex flex-col items-center justify-center gap-4"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}>
-          <div style={{ width:36, height:36, border:"3px solid #F0E5E8", borderTopColor:"#5E548E",
-            borderRadius:"50%", animation:"sp .75s linear infinite" }} />
-          <p className="text-[13.5px] font-medium text-[#5E548E]">Loading support requests…</p>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
+          @keyframes sp { to { transform: rotate(360deg); } }
+        `}</style>
+        <div
+          className="min-h-screen flex flex-col items-center justify-center gap-4"
+          style={{ fontFamily: "'DM Sans', sans-serif", background: "linear-gradient(160deg,#f7f3ff 0%,#fff5f7 60%,#fff9f0 100%)" }}
+        >
+          <div style={{
+            width: 36, height: 36,
+            border: "3px solid #e8dff7",
+            borderTopColor: "#4a2999",
+            borderRadius: "50%",
+            animation: "sp .75s linear infinite",
+          }} />
+          <p style={{ fontSize: 13.5, fontWeight: 500, color: "#4a2999" }}>Loading support requests…</p>
         </div>
       </>
     );
@@ -124,9 +146,11 @@ const ViewAllSupportRequests = () => {
     return (
       <>
         <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600&display=swap');`}</style>
-        <div className="min-h-screen bg-[#FFF9F5] flex items-center justify-center p-6"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}>
-          <div className="bg-rose-50 border border-rose-200 border-l-4 border-l-[#B5838D] rounded-2xl px-5 py-4 text-rose-700 text-[13px] max-w-sm">
+        <div
+          className="min-h-screen flex items-center justify-center p-6"
+          style={{ fontFamily: "'DM Sans', sans-serif", background: "linear-gradient(160deg,#f7f3ff 0%,#fff5f7 60%,#fff9f0 100%)" }}
+        >
+          <div className="bg-red-50 border border-red-200 border-l-4 border-l-red-400 rounded-2xl px-5 py-4 text-red-700 text-[13px] max-w-sm">
             {error}
           </div>
         </div>
@@ -140,36 +164,41 @@ const ViewAllSupportRequests = () => {
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
         .vsr-root, .vsr-root * { font-family: 'DM Sans', sans-serif; box-sizing: border-box; }
         .vsr-card { transition: transform 0.18s ease, box-shadow 0.18s ease; }
-        .vsr-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(94,84,142,0.10); }
+        .vsr-card:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(74,41,153,0.13); }
         .vsr-btn { transition: all 0.18s ease; }
-        .vsr-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(94,84,142,0.28); }
+        .vsr-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(74,41,153,0.32); background: #3a1f80 !important; }
         .vsr-btn:active { transform: scale(0.97); }
       `}</style>
 
-      <div className="vsr-root min-h-screen bg-[#FFF9F5]">
+      <div className="vsr-root min-h-screen" style={{ background: "linear-gradient(160deg,#f7f3ff 0%,#fff5f7 60%,#fff9f0 100%)" }}>
 
         {/* ── Hero Banner ── */}
-        <div className="bg-white border-b border-[#F0E5E8] px-6 py-8">
+        <div className="bg-white px-6 py-8" style={{ borderBottom: "1px solid #ede6f7" }}>
           <div className="max-w-4xl mx-auto">
             {/* eyebrow */}
-            <div className="flex items-center gap-1.5 text-[#B5838D] mb-3">
+            <div className="flex items-center gap-1.5 mb-3" style={{ color: "#9b6db5" }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
               </svg>
-              <span className="text-[10px] font-bold uppercase tracking-[0.15em]">HOPE · Cancer Support Fund</span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.16em]">HOPE · Cancer Support Fund</span>
             </div>
 
-            <h1 className="text-2xl font-bold text-[#5E548E] leading-tight mb-2">
+            <h1 className="text-2xl font-bold leading-tight mb-2" style={{ color: "#3d2a7a" }}>
               Support Requests
             </h1>
-            <p className="text-[13.5px] text-[#B5838D] max-w-lg leading-relaxed">
+            <p className="text-[13.5px] max-w-lg leading-relaxed" style={{ color: "#9b6db5" }}>
               Every contribution makes a difference. Browse the requests below and donate directly to a patient in need.
               {!isAuthenticated && (
-                <span className="ml-1 text-[#5E548E] font-semibold">
+                <span className="ml-1 font-semibold" style={{ color: "#4a2999" }}>
                   Please{" "}
-                  <button onClick={() => navigate(ROUTES.SIGNIN)}
-                    className="underline underline-offset-2 hover:text-[#E5989B] transition-colors duration-150">
+                  <button
+                    onClick={() => navigate(ROUTES.SIGNIN)}
+                    className="underline underline-offset-2 transition-colors duration-150"
+                    style={{ color: "#4a2999" }}
+                    onMouseOver={e => e.target.style.color = "#e2789b"}
+                    onMouseOut={e => e.target.style.color = "#4a2999"}
+                  >
                     sign in
                   </button>{" "}
                   to donate.
@@ -179,9 +208,10 @@ const ViewAllSupportRequests = () => {
 
             {/* Summary pill */}
             {supportRequests.length > 0 && (
-              <div className="mt-4 inline-flex items-center gap-2 bg-[#FDF5F7] border border-[#F0E5E8] rounded-full px-3.5 py-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#5E548E]" />
-                <span className="text-[12px] font-semibold text-[#5E548E]">
+              <div className="mt-4 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5"
+                style={{ background: "#f1ebff", border: "1px solid #d4bff5" }}>
+                <span className="w-2 h-2 rounded-full" style={{ background: "#6d3fcf" }} />
+                <span className="text-[12px] font-semibold" style={{ color: "#4a2999" }}>
                   {supportRequests.length} active request{supportRequests.length !== 1 ? "s" : ""}
                 </span>
               </div>
@@ -195,14 +225,15 @@ const ViewAllSupportRequests = () => {
           {/* Empty */}
           {supportRequests.length === 0 && (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <div className="w-14 h-14 rounded-2xl bg-[#FDF5F7] border border-[#F0E5E8] flex items-center justify-center text-[#B5838D]">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                style={{ background: "#f1ebff", border: "1px solid #d4bff5", color: "#9b6db5" }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                   strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                 </svg>
               </div>
-              <p className="text-[14px] font-semibold text-[#5E548E]">No support requests at the moment</p>
-              <p className="text-[12.5px] text-[#B5838D]">Check back soon — new requests are added regularly.</p>
+              <p className="text-[14px] font-semibold" style={{ color: "#3d2a7a" }}>No support requests at the moment</p>
+              <p className="text-[12.5px]" style={{ color: "#9b6db5" }}>Check back soon — new requests are added regularly.</p>
             </div>
           )}
 
@@ -218,22 +249,36 @@ const ViewAllSupportRequests = () => {
                 return (
                   <div
                     key={request.id}
-                    className={`vsr-card border border-[#F0E5E8] rounded-2xl overflow-hidden shadow-sm ${
-                      isUnavailable ? "bg-gray-100 opacity-70" : "bg-white"
-                    }`}
+                    className="vsr-card rounded-2xl overflow-hidden"
+                    style={{
+                      border: "1px solid #ede6f7",
+                      boxShadow: "0 2px 10px rgba(74,41,153,0.07)",
+                      background: isUnavailable ? "#f5f3fa" : "#fff",
+                      opacity: isUnavailable ? 0.72 : 1,
+                    }}
                   >
 
                     {/* Card top bar */}
-                    <div className="flex items-center justify-between px-5 py-3 bg-[#FDF5F7] border-b border-[#F0E5E8]">
-                      <div className="flex items-center gap-2 min-w-0">
-                        {/* Request type icon */}
-                        <div className="w-8 h-8 rounded-xl bg-[#5E548E] flex items-center justify-center flex-shrink-0">
+                    <div
+                      className="flex items-center justify-between px-5 py-3"
+                      style={{
+                        background: isUnavailable
+                          ? "linear-gradient(90deg,#f2f0f8,#f8f5fb)"
+                          : "linear-gradient(90deg,#f5eeff,#fff0f5)",
+                        borderBottom: "1px solid #ede6f7",
+                      }}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div
+                          className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                          style={{ background: isUnavailable ? "#8a7db8" : "#4a2999" }}
+                        >
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white"
-                            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                           </svg>
                         </div>
-                        <h2 className="text-[14px] font-bold text-[#5E548E] truncate">
+                        <h2 className="text-[14px] font-bold truncate" style={{ color: isUnavailable ? "#5a4f82" : "#3d2a7a" }}>
                           {request.request_type || "Support Request"}
                         </h2>
                       </div>
@@ -255,7 +300,8 @@ const ViewAllSupportRequests = () => {
 
                       {/* Description */}
                       {request.description && (
-                        <p className="text-[13px] text-[#3a3248] leading-relaxed mb-4 border-l-2 border-[#E5989B] pl-3">
+                        <p className="text-[13px] leading-relaxed mb-4 pl-3"
+                          style={{ color: "#3d2255", borderLeft: "3px solid #e2789b" }}>
                           {request.description}
                         </p>
                       )}
@@ -274,7 +320,7 @@ const ViewAllSupportRequests = () => {
                             ),
                             label: "Needed By",
                             value: request.needed_date
-                              ? new Date(request.needed_date).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" })
+                              ? new Date(request.needed_date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
                               : "N/A",
                           },
                           {
@@ -287,7 +333,7 @@ const ViewAllSupportRequests = () => {
                             ),
                             label: "Submitted",
                             value: request.created_at
-                              ? new Date(request.created_at).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" })
+                              ? new Date(request.created_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
                               : "N/A",
                           },
                           {
@@ -301,25 +347,27 @@ const ViewAllSupportRequests = () => {
                             value: hasItems ? `${request.items.length} item${request.items.length !== 1 ? "s" : ""}` : "N/A",
                           },
                         ].map(({ icon, label, value }) => (
-                          <div key={label} className="bg-[#FFF9F5] border border-[#F0E5E8] rounded-xl px-3 py-2.5 flex flex-col gap-1">
-                            <div className="flex items-center gap-1.5 text-[#B5838D]">
+                          <div key={label} className="rounded-xl px-3 py-2.5 flex flex-col gap-1"
+                            style={{ background: "#faf7ff", border: "1px solid #e8dff7" }}>
+                            <div className="flex items-center gap-1.5" style={{ color: "#9b6db5" }}>
                               {icon}
                               <span className="text-[9.5px] font-bold uppercase tracking-[0.1em]">{label}</span>
                             </div>
-                            <span className="text-[12.5px] font-semibold text-[#3a3248]">{value}</span>
+                            <span className="text-[12.5px] font-semibold" style={{ color: "#3d2a7a" }}>{value}</span>
                           </div>
                         ))}
                       </div>
 
                       {/* Patient details */}
-                      <div className="bg-[#FDF5F7] border border-[#F0E5E8] rounded-xl px-4 py-3 mb-4">
+                      <div className="rounded-xl px-4 py-3 mb-4"
+                        style={{ background: "#fdf8ff", border: "1px solid #e8dff7" }}>
                         <div className="flex items-center gap-1.5 mb-2.5">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#B5838D"
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9b6db5"
                             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                             <circle cx="12" cy="7" r="4"/>
                           </svg>
-                          <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-[#B5838D]">
+                          <span className="text-[9.5px] font-bold uppercase tracking-[0.12em]" style={{ color: "#9b6db5" }}>
                             Patient Details
                           </span>
                         </div>
@@ -330,8 +378,8 @@ const ViewAllSupportRequests = () => {
                             ["Medical Condition", request.patient?.medical_condition || "N/A"],
                           ].map(([label, value]) => (
                             <div key={label} className="flex flex-col gap-0.5">
-                              <span className="text-[9.5px] font-bold uppercase tracking-[0.09em] text-[#B5838D]">{label}</span>
-                              <span className="text-[12.5px] font-semibold text-[#3a3248] capitalize">{value}</span>
+                              <span className="text-[9.5px] font-bold uppercase tracking-[0.09em]" style={{ color: "#b08fd1" }}>{label}</span>
+                              <span className="text-[12.5px] font-semibold capitalize" style={{ color: "#3d2a7a" }}>{value}</span>
                             </div>
                           ))}
                         </div>
@@ -340,25 +388,27 @@ const ViewAllSupportRequests = () => {
                       {/* Items list */}
                       {hasItems && (
                         <div className="mb-4">
-                          <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-[#B5838D] block mb-2">
+                          <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] block mb-2" style={{ color: "#9b6db5" }}>
                             Requested Items
                           </span>
                           <div className="flex flex-col gap-1.5">
                             {request.items.map((item, index) => (
                               <div key={index}
-                                className="flex items-center justify-between bg-white border border-[#F0E5E8]
-                                  rounded-xl px-3.5 py-2">
+                                className="flex items-center justify-between rounded-xl px-3.5 py-2"
+                                style={{ background: "#fafafa", border: "1px solid #ede6f7" }}>
                                 <div className="flex items-center gap-2">
-                                  <span className="w-5 h-5 rounded-full bg-[#F0EBF8] flex items-center justify-center text-[10px] font-bold text-[#5E548E]">
+                                  <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0"
+                                    style={{ background: "#eee8ff", color: "#4a2999" }}>
                                     {index + 1}
                                   </span>
-                                  <span className="text-[12.5px] font-medium text-[#3a3248]">{item.item_name}</span>
+                                  <span className="text-[12.5px] font-medium" style={{ color: "#2e1c5e" }}>{item.item_name}</span>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                  <span className="text-[11.5px] text-[#B5838D]">
+                                  <span className="text-[11.5px]" style={{ color: "#9b6db5" }}>
                                     {item.quantity} {item.unit}
                                   </span>
-                                  <span className="text-[11.5px] font-semibold text-[#5E548E] bg-[#F0EBF8] px-2 py-0.5 rounded-lg">
+                                  <span className="text-[11.5px] font-semibold rounded-lg px-2 py-0.5"
+                                    style={{ color: "#4a2999", background: "#eee8ff" }}>
                                     Rs. {item.estimated_value}
                                   </span>
                                 </div>
@@ -370,7 +420,7 @@ const ViewAllSupportRequests = () => {
 
                       {/* CTA */}
                       <div className="flex items-center justify-between pt-1">
-                        <p className="text-[11.5px] text-[#B5838D] italic">
+                        <p className="text-[11.5px] italic" style={{ color: "#b08fd1" }}>
                           {isUnavailable
                             ? "This request is already being handled."
                             : isAuthenticated
@@ -381,12 +431,12 @@ const ViewAllSupportRequests = () => {
                           type="button"
                           onClick={() => !isUnavailable && handleDonateClick(request.id)}
                           disabled={isUnavailable}
-                          className={`vsr-btn inline-flex items-center gap-2 px-5 py-2.5
-                            text-[13px] font-semibold rounded-xl shadow-sm ${
-                              isUnavailable
-                                ? "bg-gray-400 text-white cursor-not-allowed"
-                                : "bg-[#5E548E] hover:bg-[#E5989B] text-white"
-                            }`}
+                          className="vsr-btn inline-flex items-center gap-2 px-5 py-2.5 text-[13px] font-semibold rounded-xl shadow-sm text-white"
+                          style={{
+                            background: isUnavailable ? "#aaa" : "#4a2999",
+                            cursor: isUnavailable ? "not-allowed" : "pointer",
+                            border: "none",
+                          }}
                         >
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -796,7 +796,7 @@ const css = `
     margin-bottom: 6px;
   }
   .dd-dc-title {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'DM Sans', system-ui, sans-serif;
     font-size: 1.25rem;
     font-weight: 500;
     color: var(--ink);
@@ -1179,7 +1179,7 @@ const DonorDashboard = () => {
   useEffect(() => { fetchProfile(); }, [fetchProfile]);
 
   const fetchDonationHistory = useCallback(async () => {
-    // Donation history belongs to the logged-in donor, so we cannot request it until the profile id exists.
+    // Donation history
     if (!profile?.id) { setDonationHistory([]); return; }
     setIsHistoryLoading(true);
     setHistoryErrorMessage("");
