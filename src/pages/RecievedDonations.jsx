@@ -11,15 +11,141 @@ const ReceivedDonation = () => {
   const [receivedItems, setReceivedItems] = useState([
     { item_name: "", quantity: "", unit: "", received: true }
   ]);
-  const [donationType, setDonationType] = useState("item");
+  const [donationType, setDonationType] = useState("");
   const [remarks, setRemarks] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [referenceCodeError, setReferenceCodeError] = useState("");
+  const [donationTypeError, setDonationTypeError] = useState("");
+  const [itemErrors, setItemErrors] = useState([
+    { item_name: "", quantity: "", unit: "" }
+  ]);
+
   const API_BASE_URL = "http://localhost:8000";
 
+  // Unit dropdown options
+  const unitOptions = [
+    "pcs",
+    "boxes",
+    "bottles",
+    "packs",
+    "strips",
+    "tubes",
+    "sachets",
+    "kg",
+    "g",
+    "litre",
+    "ml"
+  ];
+
+  const inputCls = `w-full border border-[#F0E5E8] rounded-lg px-3 py-2 text-[12.5px]
+    text-[#3a3248] bg-white placeholder-[#E8D9DE]
+    focus:outline-none focus:border-[#5E548E] focus:ring-2 focus:ring-[#5E548E]/10
+    transition-all duration-150`;
+
+  const errorCls = "text-[11px] text-rose-600 mt-1";
+
+  // Validation for reference code field
+  const validateReferenceCode = (value) => {
+    if (!value.trim()) {
+      return "Reference code is required";
+    }
+    return "";
+  };
+
+  // Validation for donation type dropdown
+  const validateDonationType = (value) => {
+    if (!value.trim()) {
+      return "Donation type is required";
+    }
+
+    if (!["medicine", "nutrients"].includes(value)) {
+      return "Donation type must be either medicine or nutrients";
+    }
+
+    return "";
+  };
+
+  // Validation for item name field
+  // Allows letters, numbers, spaces, hyphens, and parentheses
+  const validateItemName = (value) => {
+    if (!value.trim()) {
+      return "Item name is required";
+    }
+
+    const itemNameRegex = /^[a-zA-Z0-9\s\-()]+$/;
+    if (!itemNameRegex.test(value.trim())) {
+      return "Item name can only contain letters, numbers, spaces, hyphens, and parentheses";
+    }
+
+    if (!/[a-zA-Z]/.test(value.trim())) {
+      return "Item name must contain at least one letter";
+    }
+
+    return "";
+  };
+
+  // Validation for quantity field
+  // Only positive numbers are allowed
+  const validateQuantity = (value) => {
+    if (value === "" || value === null || value === undefined) {
+      return "Quantity is required";
+    }
+
+    const numberValue = Number(value);
+    if (Number.isNaN(numberValue)) {
+      return "Quantity must be a number";
+    }
+
+    if (numberValue <= 0) {
+      return "Quantity must be greater than 0";
+    }
+
+    return "";
+  };
+
+  // Validation for unit dropdown
+  // User must select one value from the allowed unit options
+  const validateUnit = (value) => {
+    if (!value.trim()) {
+      return "Unit is required";
+    }
+
+    if (!unitOptions.includes(value)) {
+      return "Please select a valid unit";
+    }
+
+    return "";
+  };
+
+  // Validate one received item row
+  const validateSingleItem = (item) => {
+    return {
+      item_name: validateItemName(item.item_name),
+      quantity: validateQuantity(item.quantity),
+      unit: validateUnit(item.unit),
+    };
+  };
+
+  // Validate all received item rows before submit
+  const validateAllItems = () => {
+    const errors = receivedItems.map((item) => validateSingleItem(item));
+    setItemErrors(errors);
+
+    return errors.every(
+      (itemError) =>
+        !itemError.item_name && !itemError.quantity && !itemError.unit
+    );
+  };
+
   const handleFindByReference = async () => {
+    const refError = validateReferenceCode(referenceCode);
+    setReferenceCodeError(refError);
+
+    if (refError) return;
+
     try {
       setLoading(true);
       setError("");
@@ -31,19 +157,40 @@ const ReceivedDonation = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      // Fetched donation request data from backend using reference code
       const foundDonationRequest = response.data.data;
       setDonationRequest(foundDonationRequest);
 
+      // Fetched support request items from the found donation request
+      // If items exist, auto-fill the received items table with them
       const supportRequestItems = foundDonationRequest.request_id?.items || [];
+
       if (supportRequestItems.length > 0) {
-        setReceivedItems(supportRequestItems.map((item) => ({
+        const mappedItems = supportRequestItems.map((item) => ({
           item_name: item.item_name || "",
           quantity: item.quantity || "",
-          unit: item.unit || "",
+          unit: unitOptions.includes(item.unit) ? item.unit : "",
           received: true,
-        })));
+        }));
+
+        setReceivedItems(mappedItems);
+
+        // Reset validation errors for fetched rows
+        setItemErrors(
+          mappedItems.map(() => ({
+            item_name: "",
+            quantity: "",
+            unit: "",
+          }))
+        );
       } else {
-        setReceivedItems([{ item_name: "", quantity: "", unit: "", received: true }]);
+        // If no items are fetched, keep one empty default row
+        setReceivedItems([
+          { item_name: "", quantity: "", unit: "", received: true }
+        ]);
+        setItemErrors([
+          { item_name: "", quantity: "", unit: "" }
+        ]);
       }
     } catch (err) {
       console.error("Error finding donation request:", err);
@@ -57,19 +204,65 @@ const ReceivedDonation = () => {
     const updatedItems = [...receivedItems];
     updatedItems[index][field] = value;
     setReceivedItems(updatedItems);
+
+    const updatedErrors = [...itemErrors];
+    if (!updatedErrors[index]) {
+      updatedErrors[index] = { item_name: "", quantity: "", unit: "" };
+    }
+
+    // Validate item name instantly while user types/selects
+    if (field === "item_name") {
+      updatedErrors[index].item_name = validateItemName(value);
+    }
+
+    // Validate quantity instantly while user types
+    if (field === "quantity") {
+      updatedErrors[index].quantity = validateQuantity(value);
+    }
+
+    // Validate unit instantly when dropdown value changes
+    if (field === "unit") {
+      updatedErrors[index].unit = validateUnit(value);
+    }
+
+    setItemErrors(updatedErrors);
   };
 
   const addNewItemRow = () => {
-    setReceivedItems([...receivedItems, { item_name: "", quantity: "", unit: "", received: true }]);
+    setReceivedItems([
+      ...receivedItems,
+      { item_name: "", quantity: "", unit: "", received: true }
+    ]);
+
+    setItemErrors([
+      ...itemErrors,
+      { item_name: "", quantity: "", unit: "" }
+    ]);
   };
 
   const removeItemRow = (index) => {
     if (receivedItems.length === 1) return;
+
     setReceivedItems(receivedItems.filter((_, i) => i !== index));
+    setItemErrors(itemErrors.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Run all required validations before submit
+    const refError = validateReferenceCode(referenceCode);
+    const typeError = validateDonationType(donationType);
+    const itemsValid = validateAllItems();
+
+    setReferenceCodeError(refError);
+    setDonationTypeError(typeError);
+
+    if (refError || typeError || !itemsValid) {
+      setError("Please fix the validation errors before submitting");
+      return;
+    }
+
     try {
       setLoading(true);
       setError("");
@@ -79,9 +272,9 @@ const ReceivedDonation = () => {
         reference_code: referenceCode,
         donation_type: donationType,
         received_items: receivedItems.map((item) => ({
-          item_name: item.item_name,
+          item_name: item.item_name.trim(),
           quantity: Number(item.quantity),
-          unit: item.unit,
+          unit: item.unit.trim(),
           received: item.received,
         })),
         donation_status: "received",
@@ -96,8 +289,11 @@ const ReceivedDonation = () => {
       setDonationRequest(null);
       setReferenceCode("");
       setReceivedItems([{ item_name: "", quantity: "", unit: "", received: true }]);
-      setDonationType("item");
+      setDonationType("");
       setRemarks("");
+      setReferenceCodeError("");
+      setDonationTypeError("");
+      setItemErrors([{ item_name: "", quantity: "", unit: "" }]);
     } catch (err) {
       console.error("Error saving donation:", err);
       setError(err.response?.data?.message || "Failed to record donation");
@@ -105,12 +301,6 @@ const ReceivedDonation = () => {
       setLoading(false);
     }
   };
-
-  /* ── shared input class ── */
-  const inputCls = `w-full border border-[#F0E5E8] rounded-lg px-3 py-2 text-[12.5px]
-    text-[#3a3248] bg-white placeholder-[#E8D9DE]
-    focus:outline-none focus:border-[#5E548E] focus:ring-2 focus:ring-[#5E548E]/10
-    transition-all duration-150`;
 
   return (
     <>
@@ -133,41 +323,77 @@ const ReceivedDonation = () => {
       `}</style>
 
       <div className="rd-root bg-[#FFF9F5] min-h-screen p-5">
-
         {/* ── Page Header ── */}
         <div className="flex items-start justify-between mb-5">
           <div>
             <div className="flex items-center gap-1 text-[#B5838D] mb-1.5">
-              {/* heart icon */}
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              <svg
+                width="11"
+                height="11"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
-              <span className="text-[9.5px] font-bold uppercase tracking-[0.14em]">Cancer Support Fund</span>
+              <span className="text-[9.5px] font-bold uppercase tracking-[0.14em]">
+                Cancer Support Fund
+              </span>
             </div>
-            <h1 className="text-xl font-bold text-[#5E548E] leading-tight">Receive Donation</h1>
-            <p className="text-[11.5px] text-[#B5838D] mt-0.5">Record a new incoming donation entry</p>
+            <h1 className="text-xl font-bold text-[#5E548E] leading-tight">
+              Receive Donation
+            </h1>
+            <p className="text-[11.5px] text-[#B5838D] mt-0.5">
+              Record a new incoming donation entry
+            </p>
           </div>
         </div>
 
         {/* ── Alerts ── */}
         {error && (
-          <div className="flex items-start gap-2 bg-rose-50 border border-rose-200 border-l-4 border-l-[#B5838D]
-            rounded-xl px-3.5 py-2.5 mb-4 text-rose-700 text-[12.5px]">
-            <svg className="shrink-0 mt-0.5" width="13" height="13" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          <div
+            className="flex items-start gap-2 bg-rose-50 border border-rose-200 border-l-4 border-l-[#B5838D]
+            rounded-xl px-3.5 py-2.5 mb-4 text-rose-700 text-[12.5px]"
+          >
+            <svg
+              className="shrink-0 mt-0.5"
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
             {error}
           </div>
         )}
 
         {successMessage && (
-          <div className="flex items-start gap-2 bg-emerald-50 border border-emerald-200 border-l-4 border-l-emerald-500
-            rounded-xl px-3.5 py-2.5 mb-4 text-emerald-700 text-[12.5px]">
-            <svg className="shrink-0 mt-0.5" width="13" height="13" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
+          <div
+            className="flex items-start gap-2 bg-emerald-50 border border-emerald-200 border-l-4 border-l-emerald-500
+            rounded-xl px-3.5 py-2.5 mb-4 text-emerald-700 text-[12.5px]"
+          >
+            <svg
+              className="shrink-0 mt-0.5"
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="20 6 9 17 4 12" />
             </svg>
             {successMessage}
           </div>
@@ -179,13 +405,19 @@ const ReceivedDonation = () => {
             Step 1
           </p>
           <label className="block text-[13px] font-semibold text-[#5E548E] mb-2.5">
-            Reference Code Lookup
+            Reference Code Lookup <span className="text-rose-500">*</span>
           </label>
           <div className="flex gap-2.5">
             <input
               type="text"
               value={referenceCode}
-              onChange={(e) => setReferenceCode(e.target.value)}
+              onChange={(e) => {
+                setReferenceCode(e.target.value);
+                setReferenceCodeError(validateReferenceCode(e.target.value));
+              }}
+              onBlur={(e) =>
+                setReferenceCodeError(validateReferenceCode(e.target.value))
+              }
               placeholder="Enter reference code…"
               className={inputCls}
             />
@@ -198,35 +430,51 @@ const ReceivedDonation = () => {
                 text-white text-[12.5px] font-semibold rounded-xl
                 transition-all duration-200 active:scale-95 whitespace-nowrap shadow-sm"
             >
-              {loading ? <div className="rd-spinner" /> : (
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              {loading ? (
+                <div className="rd-spinner" />
+              ) : (
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
               )}
               Find
             </button>
           </div>
+          {referenceCodeError && <p className={errorCls}>{referenceCodeError}</p>}
         </div>
 
         {/* ── Donation Form ── */}
         {donationRequest && (
           <form onSubmit={handleSubmit}>
-
             {/* Donation Details (read-only info) */}
             <div className="bg-white border border-[#F0E5E8] rounded-2xl p-4 mb-4 shadow-sm">
               <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#B5838D] mb-1">
                 Step 2
               </p>
-              <h2 className="text-[13px] font-semibold text-[#5E548E] mb-3">Donation Details</h2>
+              <h2 className="text-[13px] font-semibold text-[#5E548E] mb-3">
+                Donation Details
+              </h2>
 
               <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
                 {[
-                  ["Reference Code",      donationRequest.reference_code],
+                  ["Reference Code", donationRequest.reference_code],
                   ["Donation Request ID", donationRequest._id],
-                  ["Support Request ID",  donationRequest.request_id?._id || donationRequest.request_id],
-                  ["Donor ID",            donationRequest.donor_id?._id   || donationRequest.donor_id],
-                  ["Status",              donationRequest.status],
+                  [
+                    "Support Request ID",
+                    donationRequest.request_id?._id || donationRequest.request_id,
+                  ],
+                  ["Donor ID", donationRequest.donor_id?._id || donationRequest.donor_id],
+                  ["Status", donationRequest.status],
                 ].map(([label, value]) => (
                   <div key={label} className="flex flex-col gap-0.5">
                     <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#B5838D]">
@@ -246,14 +494,24 @@ const ReceivedDonation = () => {
                 Step 3
               </p>
               <label className="block text-[13px] font-semibold text-[#5E548E] mb-2.5">
-                Donation Type
+                Donation Type <span className="text-rose-500">*</span>
               </label>
-              <input
-                type="text"
+              <select
                 value={donationType}
-                onChange={(e) => setDonationType(e.target.value)}
-                className={inputCls}
-              />
+                onChange={(e) => {
+                  setDonationType(e.target.value);
+                  setDonationTypeError(validateDonationType(e.target.value));
+                }}
+                onBlur={(e) =>
+                  setDonationTypeError(validateDonationType(e.target.value))
+                }
+                className={`${inputCls} rd-select`}
+              >
+                <option value="">Select donation type</option>
+                <option value="medicine">Medicine</option>
+                <option value="nutrients">Nutrients</option>
+              </select>
+              {donationTypeError && <p className={errorCls}>{donationTypeError}</p>}
             </div>
 
             {/* Received Items */}
@@ -265,65 +523,127 @@ const ReceivedDonation = () => {
                 Received Items
               </label>
 
-              {/* Column labels */}
               <div className="grid grid-cols-5 gap-2.5 mb-1.5 px-0.5">
                 {["Item Name", "Quantity", "Unit", "Status", ""].map((h, i) => (
-                  <span key={i} className="text-[9.5px] font-bold uppercase tracking-[0.1em] text-[#B5838D]">
+                  <span
+                    key={i}
+                    className="text-[9.5px] font-bold uppercase tracking-[0.1em] text-[#B5838D]"
+                  >
                     {h}
                   </span>
                 ))}
               </div>
 
               {receivedItems.map((item, index) => (
-                <div key={index} className="grid grid-cols-5 gap-2.5 mb-2.5 items-center">
-                  <input
-                    type="text"
-                    placeholder="Item name"
-                    value={item.item_name}
-                    onChange={(e) => handleItemChange(index, "item_name", e.target.value)}
-                    className={inputCls}
-                  />
-                  <input
-                    type="number"
-                    placeholder="Qty"
-                    value={item.quantity}
-                    onChange={(e) => handleItemChange(index, "quantity", e.target.value)}
-                    className={inputCls}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Unit"
-                    value={item.unit}
-                    onChange={(e) => handleItemChange(index, "unit", e.target.value)}
-                    className={inputCls}
-                  />
-                  <select
-                    value={item.received ? "true" : "false"}
-                    onChange={(e) => handleItemChange(index, "received", e.target.value === "true")}
-                    className={`rd-select border border-[#F0E5E8] rounded-lg px-3 py-2 text-[12.5px]
-                      text-[#5E548E] bg-[#FDF5F7] focus:border-[#5E548E] transition-all duration-150`}
-                  >
-                    <option value="true">Received</option>
-                    <option value="false">Not Received</option>
-                  </select>
-                  <button
-                    type="button"
-                    onClick={() => removeItemRow(index)}
-                    disabled={receivedItems.length === 1}
-                    className="flex items-center justify-center gap-1 px-3 py-2 text-[11.5px] font-medium
-                      text-[#B5838D] border border-[#F0E5E8] rounded-lg
-                      hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200
-                      disabled:opacity-40 disabled:cursor-not-allowed
-                      transition-all duration-150 active:scale-95"
-                  >
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="3 6 5 6 21 6"/>
-                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                      <path d="M10 11v6M14 11v6M9 6V4h6v2"/>
-                    </svg>
-                    Remove
-                  </button>
+                <div key={index} className="mb-3">
+                  <div className="grid grid-cols-5 gap-2.5 items-start">
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Item name"
+                        value={item.item_name}
+                        onChange={(e) =>
+                          handleItemChange(index, "item_name", e.target.value)
+                        }
+                        onBlur={(e) =>
+                          handleItemChange(index, "item_name", e.target.value)
+                        }
+                        className={inputCls}
+                      />
+                      {itemErrors[index]?.item_name && (
+                        <p className={errorCls}>{itemErrors[index].item_name}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <input
+                        type="number"
+                        placeholder="Qty"
+                        value={item.quantity}
+                        onChange={(e) =>
+                          handleItemChange(index, "quantity", e.target.value)
+                        }
+                        onBlur={(e) =>
+                          handleItemChange(index, "quantity", e.target.value)
+                        }
+                        className={inputCls}
+                        min="1"
+                      />
+                      {itemErrors[index]?.quantity && (
+                        <p className={errorCls}>{itemErrors[index].quantity}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <select
+                        value={item.unit}
+                        onChange={(e) =>
+                          handleItemChange(index, "unit", e.target.value)
+                        }
+                        onBlur={(e) =>
+                          handleItemChange(index, "unit", e.target.value)
+                        }
+                        className={`${inputCls} rd-select`}
+                      >
+                        <option value="">Select unit</option>
+                        {unitOptions.map((unit) => (
+                          <option key={unit} value={unit}>
+                            {unit}
+                          </option>
+                        ))}
+                      </select>
+                      {itemErrors[index]?.unit && (
+                        <p className={errorCls}>{itemErrors[index].unit}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <select
+                        value={item.received ? "true" : "false"}
+                        onChange={(e) =>
+                          handleItemChange(
+                            index,
+                            "received",
+                            e.target.value === "true"
+                          )
+                        }
+                        className={`rd-select border border-[#F0E5E8] rounded-lg px-3 py-2 text-[12.5px]
+                          text-[#5E548E] bg-[#FDF5F7] focus:border-[#5E548E] transition-all duration-150 w-full`}
+                      >
+                        <option value="true">Received</option>
+                        <option value="false">Not Received</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => removeItemRow(index)}
+                        disabled={receivedItems.length === 1}
+                        className="flex items-center justify-center gap-1 px-3 py-2 text-[11.5px] font-medium
+                          text-[#B5838D] border border-[#F0E5E8] rounded-lg
+                          hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200
+                          disabled:opacity-40 disabled:cursor-not-allowed
+                          transition-all duration-150 active:scale-95 w-full"
+                      >
+                        <svg
+                          width="11"
+                          height="11"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                          <path d="M10 11v6M14 11v6M9 6V4h6v2" />
+                        </svg>
+                        Remove
+                      </button>
+                    </div>
+                  </div>
                 </div>
               ))}
 
@@ -335,9 +655,18 @@ const ReceivedDonation = () => {
                   hover:bg-[#5E548E] hover:text-white hover:border-[#5E548E]
                   transition-all duration-200 active:scale-95"
               >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
                 Add Item
               </button>
@@ -384,7 +713,6 @@ const ReceivedDonation = () => {
                 {loading ? "Saving…" : "Save Donation"}
               </button>
             </div>
-
           </form>
         )}
       </div>
