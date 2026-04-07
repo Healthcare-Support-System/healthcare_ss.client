@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import {
   useAddPatient,
   useDeletePatient,
@@ -35,6 +35,27 @@ const nameRegex = /^[A-Za-z ]*$/;
 const addressRegex = /^[A-Za-z0-9\s,./#&()\-]*$/;
 const onlyDigitsRegex = /^\d*$/;
 
+const statusStyles = {
+  pending: {
+    badge: "bg-amber-100 text-amber-700 border border-amber-200",
+    cardBorder: "border-amber-100",
+    glow: "from-amber-50 to-white",
+  },
+  verified: {
+    badge: "bg-emerald-100 text-emerald-700 border border-emerald-200",
+    cardBorder: "border-emerald-100",
+    glow: "from-emerald-50 to-white",
+  },
+  rejected: {
+    badge: "bg-rose-100 text-rose-700 border border-rose-200",
+    cardBorder: "border-rose-100",
+    glow: "from-rose-50 to-white",
+  },
+};
+
+const inputClassName =
+  "w-full rounded-xl border border-[#E7DDE3] bg-white px-4 py-3 text-[13px] text-[#4B426F] shadow-sm outline-none transition-all duration-200 placeholder:text-[#B7A9B0] focus:border-[#C9A9B2] focus:ring-4 focus:ring-[#F6EBEE]";
+
 const AllPatients = () => {
   const fileInputRef = useRef(null);
 
@@ -52,6 +73,21 @@ const AllPatients = () => {
   const [validationErrors, setValidationErrors] = useState(
     initialValidationErrors,
   );
+  const [activeFilter, setActiveFilter] = useState("all");
+
+  useEffect(() => {
+    const existingLink = document.querySelector(
+      'link[href*="fonts.googleapis.com/css2?family=DM+Sans"]',
+    );
+
+    if (!existingLink) {
+      const link = document.createElement("link");
+      link.href =
+        "https://fonts.googleapis.com/css2?family=DM+Sans:300;400;500;600;700&display=swap";
+      link.rel = "stylesheet";
+      document.head.appendChild(link);
+    }
+  }, []);
 
   const isEditMode = useMemo(() => !!editingPatient, [editingPatient]);
   const today = useMemo(() => new Date().toISOString().split("T")[0], []);
@@ -82,6 +118,11 @@ const AllPatients = () => {
       ),
     };
   }, [patients]);
+
+  const totalPatients =
+    groupedPatients.pending.length +
+    groupedPatients.verified.length +
+    groupedPatients.rejected.length;
 
   const openAddModal = () => {
     setEditingPatient(null);
@@ -370,207 +411,389 @@ const AllPatients = () => {
 
   const renderFieldError = (field) =>
     validationErrors[field] ? (
-      <p className="text-sm mt-1 text-[#B5838D]">{validationErrors[field]}</p>
+      <p className="mt-2 text-[12px] font-medium text-rose-500">
+        {validationErrors[field]}
+      </p>
     ) : null;
 
-  const renderPatientCard = (patient) => (
-    <div
-      key={patient.id}
-      className="rounded-2xl border border-[#F0E5E8] bg-white p-5 shadow-sm"
-    >
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-3">
-          <h4 className="text-lg font-semibold text-[#5E548E]">
-            {patient.full_name || "N/A"}
-          </h4>
+  const renderStatsCard = (title, value, toneClass, filterKey) => {
+    const isActive = activeFilter === filterKey;
 
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+    return (
+      <button
+        type="button"
+        onClick={() => setActiveFilter(filterKey)}
+        className={`rounded-2xl border bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${toneClass} ${
+          isActive ? "ring-2 ring-[#5E548E] ring-offset-2" : ""
+        }`}
+      >
+        <p className="text-[12px] font-medium text-[#9A8C98]">{title}</p>
+        <h3 className="mt-2 text-2xl font-bold text-[#5E548E]">{value}</h3>
+      </button>
+    );
+  };
+
+  const renderPatientCard = (patient) => {
+    const status = patient.verification_status || "pending";
+    const currentStatusStyle = statusStyles[status] || statusStyles.pending;
+
+    return (
+      <div
+        key={patient.id}
+        className={`overflow-hidden rounded-3xl border ${currentStatusStyle.cardBorder} bg-gradient-to-br ${currentStatusStyle.glow} shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg`}
+      >
+        <div className="border-b border-white/70 bg-white/70 px-5 py-4 backdrop-blur-sm">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm font-medium text-[#B5838D]">Birthdate</p>
-              <p className="text-[#5E548E]">
+              <h4 className="text-lg font-semibold text-[#4B426F]">
+                {patient.full_name || "N/A"}
+              </h4>
+              <p className="mt-1 text-[12px] text-[#9A8C98]">
+                Patient information overview
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={`rounded-full px-3 py-1 text-[11px] font-semibold capitalize ${currentStatusStyle.badge}`}
+              >
+                {patient.verification_status || "pending"}
+              </span>
+
+              <button
+                onClick={() => openEditModal(patient)}
+                className="rounded-xl bg-[#E5989B] px-4 py-2 text-[13px] font-medium text-white transition hover:scale-[1.02] hover:opacity-95"
+              >
+                Edit
+              </button>
+
+              <button
+                onClick={() => handleDelete(patient.id)}
+                disabled={isDeleting}
+                className="rounded-xl bg-[#B5838D] px-4 py-2 text-[13px] font-medium text-white transition hover:scale-[1.02] hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-5">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="rounded-2xl bg-white/80 p-4 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#B5838D]">
+                Birthdate
+              </p>
+              <p className="mt-1 text-[13px] font-medium text-[#5E548E]">
                 {patient.dob ? patient.dob.split("T")[0] : "N/A"}
               </p>
             </div>
-            <div>
-              <p className="text-sm font-medium text-[#B5838D]">Gender</p>
-              <p className="text-[#5E548E]">{patient.gender || "N/A"}</p>
+
+            <div className="rounded-2xl bg-white/80 p-4 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#B5838D]">
+                Gender
+              </p>
+              <p className="mt-1 text-[13px] font-medium text-[#5E548E]">
+                {patient.gender || "N/A"}
+              </p>
             </div>
-            <div>
-              <p className="text-sm font-medium text-[#B5838D]">
+
+            <div className="rounded-2xl bg-white/80 p-4 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#B5838D]">
                 Contact Number
               </p>
-              <p className="text-[#5E548E]">{patient.contact_no || "N/A"}</p>
+              <p className="mt-1 text-[13px] font-medium text-[#5E548E]">
+                {patient.contact_no || "N/A"}
+              </p>
             </div>
-            <div>
-              <p className="text-sm font-medium text-[#B5838D]">
+
+            <div className="rounded-2xl bg-white/80 p-4 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#B5838D]">
                 Guardian Name
               </p>
-              <p className="text-[#5E548E]">{patient.guardian_name || "N/A"}</p>
+              <p className="mt-1 text-[13px] font-medium text-[#5E548E]">
+                {patient.guardian_name || "N/A"}
+              </p>
             </div>
-            <div>
-              <p className="text-sm font-medium text-[#B5838D]">
+
+            <div className="rounded-2xl bg-white/80 p-4 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#B5838D]">
                 Guardian Contact
               </p>
-              <p className="text-[#5E548E]">
+              <p className="mt-1 text-[13px] font-medium text-[#5E548E]">
                 {patient.guardian_contact || "N/A"}
               </p>
             </div>
-            <div>
-              <p className="text-sm font-medium text-[#B5838D]">
+
+            <div className="rounded-2xl bg-white/80 p-4 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#B5838D]">
                 Verification Status
               </p>
-              <p className="capitalize text-[#5E548E]">
+              <p className="mt-1 text-[13px] font-medium capitalize text-[#5E548E]">
                 {patient.verification_status || "pending"}
               </p>
             </div>
           </div>
 
-          <div>
-            <p className="text-sm font-medium text-[#B5838D]">Address</p>
-            <p className="text-[#5E548E]">{patient.address || "N/A"}</p>
+          <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-2">
+            <div className="rounded-2xl bg-white/80 p-4 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#B5838D]">
+                Address
+              </p>
+              <p className="mt-1 text-[13px] leading-6 text-[#5E548E]">
+                {patient.address || "N/A"}
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white/80 p-4 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#B5838D]">
+                Medical Condition
+              </p>
+              <p className="mt-1 text-[13px] leading-6 text-[#5E548E]">
+                {patient.medical_condition || "N/A"}
+              </p>
+            </div>
           </div>
 
-          <div>
-            <p className="text-sm font-medium text-[#B5838D]">
-              Medical Condition
-            </p>
-            <p className="text-[#5E548E]">
-              {patient.medical_condition || "N/A"}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-[#B5838D] mb-2">
+          <div className="mt-4 rounded-2xl bg-white/80 p-4 shadow-sm">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#B5838D]">
               Verification Document (GN Certificate)
             </p>
+
             {patient.verification_documents?.length > 0 ? (
-              <div className="space-y-1">
+              <div className="mt-3 flex flex-col gap-2">
                 {patient.verification_documents.map((doc, index) => (
                   <a
                     key={index}
                     href={doc}
                     target="_blank"
                     rel="noreferrer"
-                    className="block text-[#E5989B] underline"
+                    className="inline-flex w-fit rounded-lg bg-[#FDF1F3] px-3 py-2 text-[13px] font-medium text-[#D97786] transition hover:bg-[#FBE4E8]"
                   >
                     View Document {index + 1}
                   </a>
                 ))}
               </div>
             ) : (
-              <p className="text-[#5E548E]">No documents uploaded</p>
+              <p className="mt-2 text-[13px] text-[#8A7D88]">
+                No documents uploaded
+              </p>
             )}
           </div>
         </div>
-
-        <div className="flex gap-2 self-start">
-          <button
-            onClick={() => openEditModal(patient)}
-            className="rounded-lg bg-[#E5989B] px-4 py-2 text-white transition hover:opacity-90"
-          >
-            Edit
-          </button>
-
-          <button
-            onClick={() => handleDelete(patient.id)}
-            disabled={isDeleting}
-            className="rounded-lg bg-[#B5838D] px-4 py-2 text-white transition hover:opacity-90 disabled:opacity-50"
-          >
-            Delete
-          </button>
-        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
-  const renderSection = (title, patientsList, emptyText) => (
-    <section className="rounded-2xl bg-[#FFF9F5] p-5 shadow-sm border border-[#F0E5E8]">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-lg font-bold text-[#5E548E]">{title}</h3>
-        <span className="rounded-full bg-[#FDF5F7] px-3 py-1 text-sm font-medium text-[#B5838D]">
-          {patientsList.length}
-        </span>
-      </div>
+  const renderSection = (title, patientsList, emptyText, status) => {
+    const currentStatusStyle = statusStyles[status] || statusStyles.pending;
 
-      {patientsList.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-[#F0E5E8] bg-white p-6 text-center text-[#B5838D]">
-          {emptyText}
+    return (
+      <section className="overflow-hidden rounded-3xl border border-[#EDE3E7] bg-white shadow-sm">
+        <div className="flex flex-col gap-3 border-b border-[#F4ECEF] bg-[#FFFCFD] px-5 py-5 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-[#5E548E]">{title}</h3>
+            <p className="mt-1 text-[12px] text-[#9A8C98]">
+              Easily review and manage patient records
+            </p>
+          </div>
+
+          <span
+            className={`w-fit rounded-full px-4 py-2 text-[12px] font-semibold ${currentStatusStyle.badge}`}
+          >
+            {patientsList.length} Patients
+          </span>
         </div>
-      ) : (
-        <div className="space-y-4">{patientsList.map(renderPatientCard)}</div>
-      )}
-    </section>
-  );
+
+        <div className="p-5">
+          {patientsList.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-[#E8DDE2] bg-[#FFF9FB] px-6 py-10 text-center">
+              <p className="text-[13px] font-medium text-[#B5838D]">
+                {emptyText}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-5">{patientsList.map(renderPatientCard)}</div>
+          )}
+        </div>
+      </section>
+    );
+  };
 
   if (isLoading) {
-    return <div className="p-6 text-[#5E548E]">Loading patients...</div>;
+    return (
+      <div className="min-h-screen bg-[#FCF8FA] p-6 font-[DM_Sans]">
+        <div className="rounded-3xl border border-[#EDE3E7] bg-white p-8 text-center shadow-sm">
+          <p className="text-lg font-semibold text-[#5E548E]">
+            Loading patients...
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (isError) {
-    return <div className="p-6 text-[#B5838D]">Failed to load patients.</div>;
+    return (
+      <div className="min-h-screen bg-[#FCF8FA] p-6 font-[DM_Sans]">
+        <div className="rounded-3xl border border-rose-200 bg-rose-50 p-8 text-center shadow-sm">
+          <p className="text-lg font-semibold text-rose-600">
+            Failed to load patients.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-[#FFF9F5] p-6">
-      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <h2 className="text-2xl font-bold text-[#5E548E]">
-          All Patient Details
-        </h2>
-        <button
-          onClick={openAddModal}
-          className="rounded-lg bg-[#5E548E] px-4 py-2 text-white transition hover:opacity-90"
-        >
-          Add Patient
-        </button>
-      </div>
+    <div className="min-h-screen bg-[#FCF8FA] p-4 font-[DM_Sans] md:p-6 lg:p-8">
+      <div className="mx-auto max-w-7xl space-y-8">
+        <div className="overflow-hidden rounded-[28px] bg-gradient-to-r from-[#5E548E] via-[#7B6EA8] to-[#B5838D] p-[1px] shadow-lg">
+          <div className="rounded-[27px] bg-[linear-gradient(135deg,rgba(255,255,255,0.96),rgba(255,249,245,0.95))] px-6 py-6 md:px-8 md:py-8">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p className="mb-2 inline-flex rounded-full bg-[#F8EEF1] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#B5838D]">
+                  Patient Dashboard
+                </p>
+                <h2 className="text-2xl font-bold tracking-tight text-[#5E548E]">
+                  All Patient Details
+                </h2>
+                <p className="mt-3 max-w-2xl text-[13px] leading-6 text-[#8E8190]">
+                  Manage, verify, and review all patient records from one clear
+                  dashboard.
+                </p>
+              </div>
 
-      <div className="space-y-6">
-        {renderSection(
-          "To be Verified Patients (Pending)",
-          groupedPatients.pending,
-          "No pending patients found.",
-        )}
+              <button
+                onClick={openAddModal}
+                className="rounded-2xl bg-[#5E548E] px-5 py-3 text-[13px] font-semibold text-white shadow-md transition duration-200 hover:-translate-y-0.5 hover:bg-[#534a81]"
+              >
+                + Add Patient
+              </button>
+            </div>
 
-        {renderSection(
-          "Verified Patients",
-          groupedPatients.verified,
-          "No verified patients found.",
-        )}
+            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {renderStatsCard(
+                "Total Patients",
+                totalPatients,
+                "border-[#E9E1E7]",
+                "all",
+              )}
+              {renderStatsCard(
+                "To be Verified Patients",
+                groupedPatients.pending.length,
+                "border-amber-100",
+                "pending",
+              )}
+              {renderStatsCard(
+                "Verified Patients",
+                groupedPatients.verified.length,
+                "border-emerald-100",
+                "verified",
+              )}
+              {renderStatsCard(
+                "Rejected Patients",
+                groupedPatients.rejected.length,
+                "border-rose-100",
+                "rejected",
+              )}
+            </div>
+          </div>
+        </div>
 
-        {renderSection(
-          "Rejected Patients",
-          groupedPatients.rejected,
-          "No rejected patients found.",
-        )}
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-[13px] font-medium text-[#7C7285]">Showing:</p>
+          <span className="rounded-full bg-[#F8EEF1] px-4 py-2 text-[13px] font-semibold capitalize text-[#5E548E]">
+            {activeFilter === "all" ? "All Patients" : `${activeFilter} Patients`}
+          </span>
+
+          {activeFilter !== "all" && (
+            <button
+              type="button"
+              onClick={() => setActiveFilter("all")}
+              className="rounded-full border border-[#E7DDE3] bg-white px-4 py-2 text-[13px] font-medium text-[#5E548E] transition hover:bg-[#FAF6F8]"
+            >
+              Clear Filter
+            </button>
+          )}
+        </div>
+
+        <div className="space-y-8">
+          {(activeFilter === "all" || activeFilter === "pending") &&
+            renderSection(
+              "To be Verified Patients (Pending)",
+              groupedPatients.pending,
+              "No pending patients found.",
+              "pending",
+            )}
+
+          {(activeFilter === "all" || activeFilter === "verified") &&
+            renderSection(
+              "Verified Patients",
+              groupedPatients.verified,
+              "No verified patients found.",
+              "verified",
+            )}
+
+          {(activeFilter === "all" || activeFilter === "rejected") &&
+            renderSection(
+              "Rejected Patients",
+              groupedPatients.rejected,
+              "No rejected patients found.",
+              "rejected",
+            )}
+        </div>
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-lg">
-            <h3 className="mb-4 text-xl font-bold text-[#5E548E]">
-              {isEditMode ? "Edit Patient" : "Add Patient"}
-            </h3>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <input
-                  type="text"
-                  name="full_name"
-                  placeholder="Full Name"
-                  value={formData.full_name}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-[#F0E5E8] p-3 outline-none focus:border-[#E5989B]"
-                  required
-                />
-                {renderFieldError("full_name")}
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2D2347]/45 p-4 backdrop-blur-sm">
+          <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[28px] border border-white/60 bg-white shadow-2xl">
+            <div className="sticky top-0 z-10 border-b border-[#F2E9EC] bg-white/95 px-6 py-5 backdrop-blur-sm">
+              <div className="flex items-center justify-between gap-4">
                 <div>
+                  <h3 className="text-2xl font-bold tracking-tight text-[#5E548E]">
+                    {isEditMode ? "Edit Patient" : "Add Patient"}
+                  </h3>
+                  <p className="mt-1 text-[12px] text-[#9A8C98]">
+                    Enter patient details carefully and clearly
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="rounded-full bg-[#F8F1F4] px-4 py-2 text-[13px] font-medium text-[#7C6F82] transition hover:bg-[#F2E7EB]"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5 p-6">
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <div className="md:col-span-2">
+                  <label className="mb-2 block text-[13px] font-semibold text-[#5E548E]">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    name="full_name"
+                    placeholder="Enter full name"
+                    value={formData.full_name}
+                    onChange={handleChange}
+                    className={inputClassName}
+                    required
+                  />
+                  {renderFieldError("full_name")}
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-[13px] font-semibold text-[#5E548E]">
+                    Birthdate
+                  </label>
                   <input
                     type={formData.dob ? "date" : "text"}
                     name="dob"
-                    placeholder="Birthdate"
+                    placeholder="Select birthdate"
                     value={formData.dob}
                     onFocus={(e) => {
                       if (!formData.dob) e.target.type = "date";
@@ -580,18 +803,21 @@ const AllPatients = () => {
                     }}
                     onChange={handleChange}
                     max={today}
-                    className="w-full rounded-lg border border-[#F0E5E8] p-3 outline-none focus:border-[#E5989B]"
+                    className={inputClassName}
                     required
                   />
                   {renderFieldError("dob")}
                 </div>
 
                 <div>
+                  <label className="mb-2 block text-[13px] font-semibold text-[#5E548E]">
+                    Gender
+                  </label>
                   <select
                     name="gender"
                     value={formData.gender}
                     onChange={handleChange}
-                    className="w-full rounded-lg border border-[#F0E5E8] p-3 outline-none focus:border-[#E5989B]"
+                    className={inputClassName}
                     required
                   >
                     <option value="">Select Gender</option>
@@ -600,168 +826,192 @@ const AllPatients = () => {
                   </select>
                   {renderFieldError("gender")}
                 </div>
-              </div>
 
-              <div>
-                <input
-                  type="text"
-                  name="address"
-                  placeholder="Address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-[#F0E5E8] p-3 outline-none focus:border-[#E5989B]"
-                  required
-                />
-                {renderFieldError("address")}
-              </div>
+                <div className="md:col-span-2">
+                  <label className="mb-2 block text-[13px] font-semibold text-[#5E548E]">
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    placeholder="Enter address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    className={inputClassName}
+                    required
+                  />
+                  {renderFieldError("address")}
+                </div>
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
+                  <label className="mb-2 block text-[13px] font-semibold text-[#5E548E]">
+                    Contact Number
+                  </label>
                   <input
                     type="text"
                     name="contact_no"
-                    placeholder="Contact Number"
+                    placeholder="Enter contact number"
                     value={formData.contact_no}
                     onChange={handleChange}
                     maxLength={10}
-                    className="w-full rounded-lg border border-[#F0E5E8] p-3 outline-none focus:border-[#E5989B]"
+                    className={inputClassName}
                     required
                   />
                   {renderFieldError("contact_no")}
                 </div>
 
                 <div>
+                  <label className="mb-2 block text-[13px] font-semibold text-[#5E548E]">
+                    Guardian Name
+                  </label>
                   <input
                     type="text"
                     name="guardian_name"
-                    placeholder="Guardian Name"
+                    placeholder="Enter guardian name"
                     value={formData.guardian_name}
                     onChange={handleChange}
-                    className="w-full rounded-lg border border-[#F0E5E8] p-3 outline-none focus:border-[#E5989B]"
+                    className={inputClassName}
                     required
                   />
                   {renderFieldError("guardian_name")}
                 </div>
-              </div>
 
-              <div>
-                <input
-                  type="text"
-                  name="guardian_contact"
-                  placeholder="Guardian Contact"
-                  value={formData.guardian_contact}
-                  onChange={handleChange}
-                  maxLength={10}
-                  className="w-full rounded-lg border border-[#F0E5E8] p-3 outline-none focus:border-[#E5989B]"
-                  required
-                />
-                {renderFieldError("guardian_contact")}
-              </div>
+                <div>
+                  <label className="mb-2 block text-[13px] font-semibold text-[#5E548E]">
+                    Guardian Contact
+                  </label>
+                  <input
+                    type="text"
+                    name="guardian_contact"
+                    placeholder="Enter guardian contact"
+                    value={formData.guardian_contact}
+                    onChange={handleChange}
+                    maxLength={10}
+                    className={inputClassName}
+                    required
+                  />
+                  {renderFieldError("guardian_contact")}
+                </div>
 
-              <div>
-                <textarea
-                  name="medical_condition"
-                  placeholder="Medical Condition"
-                  value={formData.medical_condition}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-[#F0E5E8] p-3 outline-none focus:border-[#E5989B]"
-                  rows="3"
-                  required
-                />
-                {renderFieldError("medical_condition")}
-              </div>
+                <div>
+                  <label className="mb-2 block text-[13px] font-semibold text-[#5E548E]">
+                    Verification Status
+                  </label>
+                  <select
+                    name="verification_status"
+                    value={formData.verification_status}
+                    onChange={handleChange}
+                    className={inputClassName}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="verified">Verified</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </div>
 
-              <div>
-                <select
-                  name="verification_status"
-                  value={formData.verification_status}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-[#F0E5E8] p-3 outline-none focus:border-[#E5989B]"
-                >
-                  <option value="pending">Pending</option>
-                  <option value="verified">Verified</option>
-                  <option value="rejected">Rejected</option>
-                </select>
-              </div>
+                <div className="md:col-span-2">
+                  <label className="mb-2 block text-[13px] font-semibold text-[#5E548E]">
+                    Medical Condition
+                  </label>
+                  <textarea
+                    name="medical_condition"
+                    placeholder="Enter medical condition"
+                    value={formData.medical_condition}
+                    onChange={handleChange}
+                    className={`${inputClassName} min-h-[120px] resize-none`}
+                    rows="3"
+                    required
+                  />
+                  {renderFieldError("medical_condition")}
+                </div>
 
-              <div>
-                <label className="mb-2 block font-medium text-[#5E548E]">
-                  Upload Verification Document (GN Certificate)
-                </label>
+                <div className="md:col-span-2">
+                  <label className="mb-2 block text-[13px] font-semibold text-[#5E548E]">
+                    Upload Verification Document (GN Certificate)
+                  </label>
 
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  //   multiple
-                  accept="application/pdf,.pdf"
-                  onChange={handleFileChange}
-                  className="w-full rounded-lg border border-[#F0E5E8] p-3 text-[#5E548E]"
-                />
+                  <div className="rounded-2xl border border-dashed border-[#D8CAD1] bg-[#FFFBFC] p-4">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="application/pdf,.pdf"
+                      onChange={handleFileChange}
+                      className="w-full rounded-xl border border-[#E7DDE3] bg-white p-3 text-[13px] text-[#5E548E]"
+                    />
+                    <p className="mt-2 text-[11px] text-[#9A8C98]">
+                      Only one PDF document can be attached.
+                    </p>
+                  </div>
 
-                {isEditMode && existingDocuments.length > 0 && (
-                  <div className="mt-3 space-y-2">
-                    {existingDocuments.map((doc, index) => {
-                      const fileName = doc.split("/").pop();
+                  {isEditMode && existingDocuments.length > 0 && (
+                    <div className="mt-4 space-y-3">
+                      {existingDocuments.map((doc, index) => {
+                        const fileName = doc.split("/").pop();
 
-                      return (
-                        <div
-                          key={`${fileName}-${index}`}
-                          className="flex items-center justify-between rounded-lg border border-[#F0E5E8] bg-[#FFF9F5] px-3 py-2"
-                        >
-                          <a
-                            href={doc}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-sm text-[#5E548E] underline"
+                        return (
+                          <div
+                            key={`${fileName}-${index}`}
+                            className="flex flex-col gap-3 rounded-2xl border border-[#EFE3E7] bg-[#FFF9FB] px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
                           >
-                            {fileName}
-                          </a>
+                            <a
+                              href={doc}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="break-all text-[13px] font-medium text-[#5E548E] underline"
+                            >
+                              {fileName}
+                            </a>
 
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveExistingDocument(index)}
+                              className="rounded-xl bg-[#B5838D] px-4 py-2 text-[13px] font-medium text-white transition hover:opacity-90"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {selectedFiles.length > 0 && (
+                    <div className="mt-4 space-y-3">
+                      {selectedFiles.map((file, index) => (
+                        <div
+                          key={`${file.name}-${index}`}
+                          className="flex flex-col gap-3 rounded-2xl border border-[#EFE3E7] bg-[#FFF9FB] px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                          <span className="break-all text-[13px] font-medium text-[#5E548E]">
+                            {file.name}
+                          </span>
                           <button
                             type="button"
-                            onClick={() => handleRemoveExistingDocument(index)}
-                            className="rounded-md bg-[#B5838D] px-3 py-1 text-sm text-white"
+                            onClick={() => handleRemoveSelectedFile(index)}
+                            className="rounded-xl bg-[#B5838D] px-4 py-2 text-[13px] font-medium text-white transition hover:opacity-90"
                           >
                             Delete
                           </button>
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {selectedFiles.length > 0 && (
-                  <div className="mt-3 space-y-2">
-                    {selectedFiles.map((file, index) => (
-                      <div
-                        key={`${file.name}-${index}`}
-                        className="flex items-center justify-between rounded-lg border border-[#F0E5E8] bg-[#FFF9F5] px-3 py-2"
-                      >
-                        <span className="text-sm text-[#5E548E]">
-                          {file.name}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveSelectedFile(index)}
-                          className="rounded-md bg-[#B5838D] px-3 py-1 text-sm text-white"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
               {errorMessage && (
-                <p className="text-sm text-[#B5838D]">{errorMessage}</p>
+                <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3">
+                  <p className="text-[12px] font-medium text-rose-600">
+                    {errorMessage}
+                  </p>
+                </div>
               )}
 
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="flex flex-col-reverse gap-3 border-t border-[#F2E9EC] pt-5 sm:flex-row sm:justify-end">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="rounded-lg border border-[#F0E5E8] px-4 py-2 text-[#5E548E]"
+                  className="rounded-xl border border-[#E7DDE3] bg-white px-5 py-3 text-[13px] font-medium text-[#5E548E] transition hover:bg-[#FAF6F8]"
                 >
                   Cancel
                 </button>
@@ -769,7 +1019,7 @@ const AllPatients = () => {
                 <button
                   type="submit"
                   disabled={isAdding || isUpdating}
-                  className="rounded-lg bg-[#5E548E] px-4 py-2 text-white transition hover:opacity-90 disabled:opacity-50"
+                  className="rounded-xl bg-[#5E548E] px-5 py-3 text-[13px] font-medium text-white shadow-md transition hover:bg-[#534a81] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isEditMode
                     ? isUpdating
