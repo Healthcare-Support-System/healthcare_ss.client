@@ -301,7 +301,7 @@ const AdminHome = () => {
                   <IconHeart />
                 </div>
                 <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/60">
-                  සුව සවිය · Cancer Support Fund
+                   Cancer Support Fund
                 </span>
               </div>
               <h1 className="text-[22px] font-bold leading-tight">
