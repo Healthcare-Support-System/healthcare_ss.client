@@ -1,5 +1,156 @@
 import React from "react";
 
+/* ── Clean SVG Icons (matched to admin-style look) ── */
+const IconRibbon = () => (
+  <svg
+    width="48"
+    height="48"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 3a4.5 4.5 0 1 1 0 9a4.5 4.5 0 0 1 0-9Z" />
+    <path d="M9 12.5 6.5 21 12 17.8 17.5 21 15 12.5" />
+  </svg>
+);
+
+// const IconMouth = () => (
+//   <svg
+//     width="48"
+//     height="48"
+//     viewBox="0 0 24 24"
+//     fill="none"
+//     stroke="currentColor"
+//     strokeWidth="1.8"
+//     strokeLinecap="round"
+//     strokeLinejoin="round"
+//   >
+//     <path d="M2.5 12s3.5-4.5 9.5-4.5 9.5 4.5 9.5 4.5-3.5 4.5-9.5 4.5S2.5 12 2.5 12Z" />
+//     <path d="M7 12c1.2 1 2.8 1.5 5 1.5s3.8-.5 5-1.5" />
+//     <path d="M7 12c1.2-1 2.8-1.5 5-1.5s3.8.5 5 1.5" />
+//   </svg>
+// );
+
+const IconStethoscope = () => (
+  <svg
+    width="48"
+    height="48"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M6 3v5a4 4 0 0 0 8 0V3" />
+    <path d="M10 3v5" />
+    <path d="M14 14v1a4 4 0 0 0 8 0v-1" />
+    <circle cx="18" cy="11" r="3" />
+  </svg>
+);
+
+const IconBreastCheck = () => (
+  <svg
+    width="40"
+    height="40"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 21s-6.5-4.35-9-8.5C.8 8.85 3.1 5 7 5c2.2 0 3.6 1.1 5 2.8C13.4 6.1 14.8 5 17 5c3.9 0 6.2 3.85 4 7.5-2.5 4.15-9 8.5-9 8.5Z" />
+  </svg>
+);
+
+const IconTestTube = () => (
+  <svg
+    width="40"
+    height="40"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M10 2v6l-5.5 8.5A3 3 0 0 0 7 21h10a3 3 0 0 0 2.5-4.5L14 8V2" />
+    <path d="M8 14h8" />
+  </svg>
+);
+
+const IconDoctor = () => (
+  <svg
+    width="40"
+    height="40"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="7" r="4" />
+    <path d="M5 21a7 7 0 0 1 14 0" />
+    <path d="M18 10v4" />
+    <path d="M16 12h4" />
+  </svg>
+);
+
+const IconHospital = () => (
+  <svg
+    width="40"
+    height="40"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M3 21V7a2 2 0 0 1 2-2h4v16" />
+    <path d="M9 21V3h6a2 2 0 0 1 2 2v16" />
+    <path d="M17 21V9h2a2 2 0 0 1 2 2v10" />
+    <path d="M12 7v4" />
+    <path d="M10 9h4" />
+  </svg>
+);
+
+const IconLocation = () => (
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z" />
+    <circle cx="12" cy="9" r="2.5" />
+  </svg>
+);
+
+const IconCheck = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
 const Awareness = () => {
   const commonCancers = [
     {
@@ -7,21 +158,21 @@ const Awareness = () => {
       subtitle: "Most common among women in Sri Lanka",
       stat: "5,485 cases",
       note: "Breast cancer is one of the leading cancers in Sri Lanka and early detection greatly improves treatment outcomes.",
-      icon: "🎗️",
+      icon: <IconRibbon />,
     },
     {
       title: "Oral Cancer",
       subtitle: "Very common among men in Sri Lanka",
       stat: "2,687 cases",
       note: "Lip, tongue, and mouth cancers are among the leading cancers in Sri Lankan men, especially with tobacco, betel, and alcohol risk factors.",
-      icon: "👄",
+      //icon: <IconMouth />,
     },
     {
       title: "Colorectal Cancer",
       subtitle: "Common in both men and women",
       stat: "3rd leading in Sri Lanka",
       note: "Colon and rectum cancers are a growing concern in Sri Lanka and should not be ignored if symptoms appear.",
-      icon: "🩺",
+      icon: <IconStethoscope />,
     },
   ];
 
@@ -40,25 +191,25 @@ const Awareness = () => {
       title: "Breast Check",
       description:
         "Clinical breast examination, breast clinic review, and mammography when needed.",
-      icon: "🩷",
+      icon: <IconBreastCheck />,
     },
     {
       title: "Cervical Check",
       description:
         "Pap smear or HPV-related screening based on Sri Lankan national guidance.",
-      icon: "🧪",
+      icon: <IconTestTube />,
     },
     {
       title: "Oral Check",
       description:
         "A doctor or trained health worker examines the mouth, tongue, cheeks, and throat for abnormal changes.",
-      icon: "👨‍⚕️",
+      icon: <IconDoctor />,
     },
     {
       title: "Specialist Referral",
       description:
         "If signs are suspicious, patients may be referred for imaging, biopsy, or specialist clinic review.",
-      icon: "🏥",
+      icon: <IconHospital />,
     },
   ];
 
@@ -111,7 +262,9 @@ const Awareness = () => {
 
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-purple-100">
             <p className="text-sm text-gray-500 mb-2">Important Message</p>
-            <h3 className="text-2xl font-bold text-[#5E548E]">Early detection matters</h3>
+            <h3 className="text-2xl font-bold text-[#5E548E]">
+              Early detection matters
+            </h3>
             <p className="text-gray-600 mt-2">
               Many cancers can be treated better when found early.
             </p>
@@ -119,7 +272,9 @@ const Awareness = () => {
 
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-purple-100">
             <p className="text-sm text-gray-500 mb-2">Where to Start</p>
-            <h3 className="text-2xl font-bold text-[#5E548E]">Check symptoms early</h3>
+            <h3 className="text-2xl font-bold text-[#5E548E]">
+              Check symptoms early
+            </h3>
             <p className="text-gray-600 mt-2">
               Do not wait too long if something unusual continues.
             </p>
@@ -145,7 +300,9 @@ const Awareness = () => {
               key={index}
               className="bg-white rounded-3xl p-8 shadow-md border border-purple-100 hover:shadow-xl transition duration-300"
             >
-              <div className="text-5xl mb-5">{item.icon}</div>
+              <div className="mb-5 w-16 h-16 rounded-2xl bg-[#f1edf9] text-[#5E548E] flex items-center justify-center">
+                {item.icon}
+              </div>
               <p className="text-sm font-medium text-purple-500 mb-2">
                 {item.subtitle}
               </p>
@@ -189,8 +346,8 @@ const Awareness = () => {
                   key={index}
                   className="flex items-start gap-3 bg-[#f7f5fc] border border-purple-100 rounded-2xl p-4"
                 >
-                  <span className="text-[#5E548E] text-xl font-bold mt-0.5">
-                    ✓
+                  <span className="text-[#5E548E] mt-0.5 shrink-0">
+                    <IconCheck />
                   </span>
                   <p className="text-gray-700 leading-relaxed">{item}</p>
                 </div>
@@ -218,7 +375,9 @@ const Awareness = () => {
               key={index}
               className="bg-white rounded-2xl p-6 shadow-md border border-purple-100 text-center hover:shadow-lg transition"
             >
-              <div className="text-4xl mb-4">{method.icon}</div>
+              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[#f1edf9] text-[#5E548E] flex items-center justify-center">
+                {method.icon}
+              </div>
               <h3 className="text-xl font-bold text-[#5E548E] mb-3">
                 {method.title}
               </h3>
@@ -249,7 +408,9 @@ const Awareness = () => {
                   key={index}
                   className="flex items-center gap-3 p-4 rounded-2xl border border-purple-100 bg-[#f7f5fc]"
                 >
-                  <span className="text-xl">📍</span>
+                  <span className="text-[#5E548E] shrink-0">
+                    <IconLocation />
+                  </span>
                   <span className="text-gray-700 font-medium">{place}</span>
                 </div>
               ))}
@@ -265,9 +426,7 @@ const Awareness = () => {
                 • Cancer can happen at many ages, but risk generally increases
                 as people get older.
               </li>
-              <li>
-                • Do not ignore a symptom just because it is painless.
-              </li>
+              <li>• Do not ignore a symptom just because it is painless.</li>
               <li>
                 • People with smoking, alcohol, or betel chewing habits should
                 be especially careful about oral cancer.
@@ -276,9 +435,7 @@ const Awareness = () => {
                 • Women should not ignore breast lumps, nipple changes, or
                 unusual bleeding.
               </li>
-              <li>
-                • Screening and early medical advice can save lives.
-              </li>
+              <li>• Screening and early medical advice can save lives.</li>
             </ul>
           </div>
         </div>

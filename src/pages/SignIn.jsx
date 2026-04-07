@@ -4,80 +4,56 @@ import { ROUTES } from "../routes/path";
 import { useAuth } from "../contexts/AuthContext";
 import { useLogin } from "../hooks/useAuthApi";
 import bgImage from "../assets/women-hands-ribbon.jpg";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
+  const [isEyeHovered, setIsEyeHovered] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
   const { mutate, isPending } = useLogin();
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   setErrorMessage("");
-
-  //   mutate(
-  //     { email, password },
-  //     {
-  //       onSuccess: (response) => {
-  //         login(response);
-
-  //         const role = response?.user?.role;
-
-  //         if (role === "donor") navigate(ROUTES.DONATE);
-  //         else if (role === "admin") navigate(ROUTES.ADMIN_DASHBOARD);
-  //         else if (role === "social_worker")
-  //           navigate(ROUTES.SOCIAL_WORKER_DASHBOARD);
-  //         else navigate(ROUTES.HOME);
-  //       },
-  //       onError: (error) => {
-  //         setErrorMessage(
-  //           error?.response?.data?.message ||
-  //             "Login failed. Please try again."
-  //         );
-  //       },
-  //     }
-  //   );
-  // };
-
   const handleSubmit = (e) => {
-  e.preventDefault();
-  setErrorMessage("");
+    e.preventDefault();
+    setErrorMessage("");
 
-  // 🔹 VALIDATION START
-  if (!email || !password) {
-    setErrorMessage("Please fill in all fields.");
-    return;
-  }
+    if (!email || !password) {
+      setErrorMessage("Please fill in all fields.");
+      return;
+    }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!emailRegex.test(email)) {
-    setErrorMessage("Please enter a valid email address.");
-    return;
-  }
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Please enter a valid email address.");
+      return;
+    }
 
-  if (password.length < 6) {
-    setErrorMessage("Password must be at least 6 characters.");
-    return;
-  }
-  // 🔹 VALIDATION END
+    // ✅ At least 8 characters validation
+    if (password.length < 8) {
+      setErrorMessage("Password must be at least 8 characters long.");
+      return;
+    }
 
-  mutate(
-    { email, password },
-    {
-      onSuccess: (response) => {
-        login(response);
+    mutate(
+      { email, password },
+      {
+        onSuccess: (response) => {
+          login(response);
 
-        const role = response?.user?.role;
+          const role = response?.user?.role;
 
-        if (role === "donor") navigate(ROUTES.DONATE);
-        else if (role === "admin") navigate(ROUTES.ADMIN_DASHBOARD);
-        else if (role === "social_worker")
-          navigate(ROUTES.SOCIAL_WORKER_DASHBOARD);
-        else navigate(ROUTES.HOME);
+          if (role === "donor") navigate(ROUTES.DONATE);
+          else if (role === "admin") navigate(ROUTES.ADMIN_DASHBOARD);
+          else if (role === "social_worker")
+            navigate(ROUTES.SOCIAL_WORKER_DASHBOARD);
+          else navigate(ROUTES.HOME);
+
           if (role === "donor") {
             localStorage.removeItem("donorId");
             localStorage.setItem(
@@ -85,7 +61,7 @@ const SignIn = () => {
               response?.user?.full_name ||
                 response?.user?.first_name ||
                 response?.user?.name ||
-                "",
+                ""
             );
             navigate(ROUTES.DONATE);
           } else if (role === "admin") {
@@ -98,19 +74,12 @@ const SignIn = () => {
         },
         onError: (error) => {
           setErrorMessage(
-            error?.response?.data?.message || "Login failed. Please try again.",
+            error?.response?.data?.message || "Login failed. Please try again."
           );
         },
-      },
-      // onError: (error) => {
-      //   setErrorMessage(
-      //     error?.response?.data?.message ||
-      //       "Login failed. Please try again."
-      //   );
-      // },
-    //}
-  );
-};
+      }
+    );
+  };
 
   const colors = {
     primary: "#5E548E",
@@ -133,7 +102,7 @@ const SignIn = () => {
         fontFamily: "'Inter', 'Segoe UI', sans-serif",
       }}
     >
-      {/* LEFT SIDE (Image + overlay) */}
+      {/* LEFT SIDE */}
       <div
         style={{
           flex: "1 1 50%",
@@ -148,12 +117,7 @@ const SignIn = () => {
           padding: "60px",
         }}
       >
-        <div
-          style={{
-            maxWidth: "520px",
-            color: "#fff",
-          }}
-        >
+        <div style={{ maxWidth: "520px", color: "#fff" }}>
           <div
             style={{
               display: "inline-block",
@@ -195,7 +159,7 @@ const SignIn = () => {
         </div>
       </div>
 
-      {/* RIGHT SIDE (Login Form) */}
+      {/* RIGHT SIDE */}
       <div
         style={{
           flex: "1 1 50%",
@@ -217,15 +181,15 @@ const SignIn = () => {
             border: `1px solid ${colors.border}`,
           }}
         >
-            <h2
-             style={{
-             color: colors.primary,
-             fontSize: "36px",
-             marginBottom: "8px",
-             fontWeight: "600", // 👈 added
+          <h2
+            style={{
+              color: colors.primary,
+              fontSize: "36px",
+              marginBottom: "8px",
+              fontWeight: "600",
             }}
-             >
-             Sign In
+          >
+            Sign In
           </h2>
 
           <p
@@ -254,44 +218,55 @@ const SignIn = () => {
                 backgroundColor: colors.inputBg,
                 marginBottom: "16px",
                 fontSize: "15px",
+                outline: "none",
               }}
             />
 
             {/* PASSWORD */}
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{
-                width: "100%",
-                padding: "16px",
-                borderRadius: "14px",
-                border: `1px solid ${colors.border}`,
-                backgroundColor: colors.inputBg,
-                marginBottom: "12px",
-                fontSize: "15px",
-              }}
-            />
+            <div style={{ position: "relative", marginBottom: "16px" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setErrorMessage("");
+                }}
+                required
+                style={{
+                  width: "100%",
+                  padding: "16px 52px 16px 16px",
+                  borderRadius: "14px",
+                  border: `1px solid ${colors.border}`,
+                  backgroundColor: colors.inputBg,
+                  fontSize: "15px",
+                  outline: "none",
+                }}
+              />
 
-            {/* OPTIONS */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: "18px",
-                fontSize: "14px",
-                color: colors.secondary,
-              }}
-            >
-              <label style={{ cursor: "pointer" }}>
-                <input type="checkbox" /> Remember me
-              </label>
-
-              <span style={{ cursor: "pointer" }}>
-                Forgot password?
-              </span>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                onMouseEnter={() => setIsEyeHovered(true)}
+                onMouseLeave={() => setIsEyeHovered(false)}
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  right: "14px",
+                  transform: "translateY(-50%)",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "4px",
+                  color: isEyeHovered ? colors.primary : colors.secondary,
+                  transition: "all 0.3s ease",
+                }}
+              >
+                {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+              </button>
             </div>
 
             {/* ERROR */}
@@ -314,24 +289,26 @@ const SignIn = () => {
             <button
               type="submit"
               disabled={isPending}
+              onMouseEnter={() => setIsButtonHovered(true)}
+              onMouseLeave={() => setIsButtonHovered(false)}
               style={{
                 width: "100%",
                 padding: "16px",
                 borderRadius: "14px",
                 border: "none",
-                backgroundColor: colors.accent,
+                backgroundColor: isButtonHovered ? colors.primary : colors.accent,
                 color: "#fff",
                 fontSize: "16px",
                 fontWeight: "600",
                 cursor: "pointer",
                 opacity: isPending ? 0.7 : 1,
+                transition: "all 0.3s ease",
               }}
             >
               {isPending ? "Logging in..." : "Sign In"}
             </button>
           </form>
 
-          {/* SIGNUP */}
           <p
             style={{
               textAlign: "center",

@@ -49,7 +49,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/donations"
+                  to="/donate"
                   className="transition duration-300 hover:translate-x-1 inline-block"
                   style={{ color: "#F0E5E8" }}
                   onMouseEnter={(e) => (e.target.style.color = "#E5989B")}
@@ -60,7 +60,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/patients"
+                  to="/awareness"
                   className="transition duration-300 hover:translate-x-1 inline-block"
                   style={{ color: "#F0E5E8" }}
                   onMouseEnter={(e) => (e.target.style.color = "#E5989B")}
