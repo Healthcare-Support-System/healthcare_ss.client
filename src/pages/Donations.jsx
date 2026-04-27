@@ -127,6 +127,39 @@ const inlineStyle = `
   .don-btn-danger:hover {
     background: #b85558;
   }
+
+  .don-hero {
+    background: linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(252,246,248,0.98) 52%, rgba(244,237,249,0.98) 100%);
+    border: 1px solid #EAD7DE;
+    box-shadow: 0 14px 34px rgba(94, 84, 142, 0.08);
+  }
+
+  .don-filter-pill {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .don-filter-pill::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.16), transparent 65%);
+    pointer-events: none;
+  }
+
+  .don-table-shell {
+    background: rgba(255,255,255,0.96);
+    border: 1px solid #E7D5DC;
+    box-shadow: 0 14px 34px rgba(94, 84, 142, 0.08);
+  }
+
+  .don-table-head {
+    background: linear-gradient(180deg, #FCF6F8 0%, #F7EBF0 100%);
+  }
+
+  .don-table-row:hover {
+    background: linear-gradient(90deg, rgba(253,244,246,0.94) 0%, rgba(249,241,252,0.94) 100%);
+  }
 `;
 
 const STATUS_MAP = {
@@ -159,18 +192,10 @@ const IconHeart = ({ size = 12 }) => (
   </svg>
 );
 
-
-const StatCard = ({ label, value, valueClass = "text-[#4A3F7A]" }) => (
-  <div className="flex flex-col gap-0.5 bg-white border border-[#E2CDD3] rounded-xl px-4 py-3 shadow-sm min-w-[90px]">
-    <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-[#9A5F6A]">{label}</span>
-    <span className={`text-xl font-bold leading-tight ${valueClass}`}>{value}</span>
-  </div>
-);
-
 /* Table header cell */
 const TH = ({ children, center = false }) => (
   <th className={`px-3 py-3 text-[10px] font-bold uppercase tracking-[0.1em] text-[#4A3F7A]
-    border-b border-[#E2CDD3] whitespace-nowrap bg-[#F7EBF0]
+    border-b border-[#E2CDD3] whitespace-nowrap don-table-head
     ${center ? "text-center" : "text-left"}`}>
     {children}
   </th>
@@ -182,6 +207,7 @@ const Donations = () => {
   const [donations, setDonations] = useState([]);
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState("");
+  const [activeFilter, setActiveFilter] = useState("all");
   const [popup, setPopup]         = useState({
     open: false,
     title: "",
@@ -321,7 +347,11 @@ const Donations = () => {
 
   const total     = donations.length;
   const allocated = donations.filter((d) => d.donation_status === "allocated").length;
-  const completed = donations.filter((d) => d.donation_status === "completed").length;
+  const received = donations.filter((d) => (d.donation_status || "received") === "received").length;
+  const filteredDonations = donations.filter((donation) => {
+    if (activeFilter === "all") return true;
+    return (donation.donation_status || "received") === activeFilter;
+  });
 
   return (
     <>
@@ -362,39 +392,56 @@ const Donations = () => {
       <div className="don-root bg-[#FDF4F6] min-h-screen p-5">
 
         {/* ── Header ── */}
-        <div className="flex items-start justify-between mb-5">
+        <div className="don-hero rounded-[28px] px-5 py-5 md:px-6 md:py-6 mb-5">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <div className="flex items-center gap-1 text-[#9A5F6A] mb-1.5">
-              <IconHeart size={11} />
-              <span className="text-[9.5px] font-bold uppercase tracking-[0.14em]">
+            <div className="inline-flex items-center gap-1.5 text-[#9A5F6A] mb-2 px-3 py-1.5 rounded-full bg-[#F9EEF2] border border-[#EAD7DE]">
+              <IconHeart size={10} />
+              <span className="text-[9px] font-bold uppercase tracking-[0.16em]">
                 Cancer Support Fund
               </span>
             </div>
-            <h1 className="text-xl font-bold text-[#4A3F7A] leading-tight">
+            <h1 className="text-[24px] md:text-[28px] font-bold text-[#4A3F7A] leading-tight">
               Donation Records
             </h1>
-            <p className="text-[11.5px] text-[#9A5F6A] mt-0.5">
+            <p className="text-[12.5px] text-[#9A5F6A] mt-1 leading-6 max-w-xl">
               View, manage, and track all incoming donation entries
             </p>
           </div>
 
           <button
             onClick={() => navigate(ROUTES.RECEIVED_DONATION)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-[#4A3F7A] hover:bg-[#D4737A]
-              text-white text-[12.5px] font-semibold rounded-xl shadow
+            className="flex items-center gap-2 px-5 py-3 bg-[#4A3F7A] hover:bg-[#D4737A]
+              text-white text-[12.5px] font-semibold rounded-xl shadow-md
               transition-all duration-200 active:scale-95 whitespace-nowrap"
           >
             <IconPlus />
             Add Received Donation
           </button>
         </div>
+        </div>
 
         {/* ── Stat Strip ── */}
         {!loading && !error && total > 0 && (
-          <div className="flex items-stretch gap-2.5 mb-5">
-            <StatCard label="Total Donations" value={total} />
-            <StatCard label="Allocated"       value={allocated} valueClass="text-purple-800" />
-            <StatCard label="Completed"       value={completed} valueClass="text-emerald-800" />
+          <div className="flex flex-wrap gap-2.5 mb-5">
+            {[
+              { key: "all", label: "All", value: total },
+              { key: "received", label: "Received", value: received },
+              { key: "allocated", label: "Allocated", value: allocated },
+            ].map(({ key, label, value }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setActiveFilter(key)}
+                className={`don-filter-pill px-4 py-2.5 text-[12px] font-semibold rounded-2xl border transition-all duration-150 active:scale-95 ${
+                  activeFilter === key
+                    ? "bg-[#4A3F7A] text-white border-[#4A3F7A] shadow-md"
+                    : "bg-white text-[#5a5070] border-[#E2CDD3] hover:bg-[#F7EBF0] hover:border-[#D7C1CB]"
+                }`}
+              >
+                {label} ({value})
+              </button>
+            ))}
           </div>
         )}
 
@@ -430,8 +477,15 @@ const Donations = () => {
         )}
 
         {/* ── Table ── */}
-        {!loading && !error && total > 0 && (
-          <div className="bg-white border border-[#E2CDD3] rounded-2xl overflow-hidden shadow-sm">
+        {!loading && !error && total > 0 && filteredDonations.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 gap-2.5">
+            <p className="text-[13.5px] font-semibold text-[#4A3F7A]">No {activeFilter} donations found</p>
+            <p className="text-[12px] text-[#9A5F6A]">Try another filter to view more records.</p>
+          </div>
+        )}
+
+        {!loading && !error && filteredDonations.length > 0 && (
+          <div className="don-table-shell rounded-[28px] overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-[12.5px] border-collapse">
                 <thead>
@@ -448,7 +502,7 @@ const Donations = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {donations.map((donation, idx) => {
+                  {filteredDonations.map((donation, idx) => {
                     const status = donation.donation_status || "received";
                     const sc     = STATUS_MAP[status] || STATUS_MAP.received;
                     const donorName = `${donation.donor_id?.first_name || ""} ${donation.donor_id?.last_name || ""}`.trim();
@@ -456,9 +510,9 @@ const Donations = () => {
                     return (
                       <tr
                         key={donation._id}
-                        className={`border-b border-[#E2CDD3] hover:bg-[#FDF4F6]
+                        className={`don-table-row border-b border-[#E2CDD3]
                           transition-colors duration-100
-                          ${idx === total - 1 ? "border-b-0" : ""}`}
+                          ${idx === filteredDonations.length - 1 ? "border-b-0" : ""}`}
                       >
                         {/* # */}
                         <td className="px-3 py-2.5 text-[#9A5F6A] text-[11.5px] font-medium w-8">
@@ -537,7 +591,7 @@ const Donations = () => {
                             onClick={() => handleDelete(donation._id)}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5
                               text-[11.5px] font-medium text-[#9A5F6A]
-                              bg-transparent border border-[#E2CDD3] rounded-lg
+                              bg-white/80 border border-[#E2CDD3] rounded-xl
                               hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300
                               transition-all duration-150 active:scale-95"
                           >
@@ -553,12 +607,12 @@ const Donations = () => {
             </div>
 
             {/* Footer */}
-            <div className="px-4 py-2.5 bg-[#F7EBF0] border-t border-[#E2CDD3]
+            <div className="px-4 py-3 bg-[#F7EBF0] border-t border-[#E2CDD3]
               flex items-center justify-between">
               <span className="text-[11px] text-[#9A5F6A]">
                 Showing{" "}
-                <span className="font-semibold text-[#4A3F7A]">{total}</span>{" "}
-                record{total !== 1 ? "s" : ""}
+                <span className="font-semibold text-[#4A3F7A]">{filteredDonations.length}</span>{" "}
+                record{filteredDonations.length !== 1 ? "s" : ""}
               </span>
               <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-[#D4B8C0]">
                 Cancer Support Fund
