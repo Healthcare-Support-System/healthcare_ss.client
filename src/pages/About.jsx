@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import supportImg from "../assets/support.jpg";
+import supportImg from "../assets/Nurse.png";
 
 // Animated counter hook
 const useCountUp = (target, duration = 2000) => {

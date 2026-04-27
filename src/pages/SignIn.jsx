@@ -35,10 +35,10 @@ const SignIn = () => {
     }
 
     // ✅ At least 8 characters validation
-    if (password.length < 8) {
-      setErrorMessage("Password must be at least 8 characters long.");
-      return;
-    }
+    // if (password.length < 8) {
+    //   setErrorMessage("Password must be at least 8 characters long.");
+    //   return;
+    // }
 
     mutate(
       { email, password },

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import togetherImg from "../assets/Apeksha-web-bannerN.jpg";
+import togetherImg from "../assets/WebBanner.png";
 import hopeImg from "../assets/Children.jpeg";
 import patientImg from "../assets/LoveLives.jpeg";
 import donationBoxesImg from "../assets/DonateN.jpg";
@@ -106,62 +106,118 @@ const Home = () => {
 
       <div style={{ fontFamily: "'DM Sans', sans-serif", color: 'var(--ink)', background: '#fff' }}>
 
-        {/* ── HERO ── */}
-        <section className="relative min-h-[92vh] flex items-end overflow-hidden">
-          <div className="absolute inset-0">
-            <img 
-  src={togetherImg} 
-  alt="hero" 
-  className="w-full h-full object-cover object-center md:object-[center_top] scale-100" 
-/>
-          </div>
-          <div className="absolute inset-0" style={{
-            background: 'linear-gradient(to right, rgba(28,23,51,.85) 0%, rgba(28,23,51,.5) 55%, transparent 100%)'
-          }} />
-          <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{
-            background: 'linear-gradient(to bottom, transparent, #fff)'
-          }} />
-          {/* vertical accent line */}
-          <div className="absolute left-12 top-0 bottom-0 w-px hidden lg:block"
-            style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,.3), transparent)' }} />
+{/* ── HERO ── */}
+<section className="relative min-h-[92vh] flex items-center overflow-hidden">
 
-          <div className="relative z-10 max-w-6xl mx-auto px-6 lg:px-12 pb-28 pt-40 w-full">
-            <div className="max-w-xl">
-              <p className="hero-line badge" style={{ color: '#e8d5f5', background: 'rgba(255,255,255,.12)', borderColor: 'rgba(255,255,255,.25)' }}>
-                <span className="badge-dot" style={{ background: '#F2AABF' }} />
-               Apeksha Hospital · Bringing Hope to Cancer Patients
-              </p>
+  {/* Background Image */}
+  <div className="absolute inset-0">
+    <img
+      src={togetherImg}
+      alt="hero"
+      className="w-full h-full object-cover object-center md:object-[center_top]"
+    />
+  </div>
 
-              <h1 className="hero-line mt-6 font-black leading-none text-white"
-                style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(3rem, 7vw, 5.5rem)' }}>
-                Give Hope.<br />
-                <span style={{ color: '#F2AABF' }}>Save Lives.</span>
-              </h1>
+  {/* Overlay Gradient */}
+  <div
+    className="absolute inset-0"
+    style={{
+      background:
+        "linear-gradient(to right, rgba(28,23,51,.85) 0%, rgba(28,23,51,.5) 55%, transparent 100%)",
+    }}
+  />
 
-              <p className="hero-line mt-6 text-base md:text-lg leading-relaxed"
-                style={{ color: 'rgba(255,255,255,.75)', maxWidth: '38ch' }}>
-                Your donation provides real relief — medicine, nutrition, and care — for cancer patients facing financial hardship during treatment.
-              </p>
+  {/* Vertical Accent Line */}
+  <div
+    className="absolute left-12 top-0 bottom-0 w-px hidden lg:block"
+    style={{
+      background:
+        "linear-gradient(to bottom, transparent, rgba(255,255,255,.3), transparent)",
+    }}
+  />
 
-              <div className="hero-line mt-10 flex flex-wrap gap-4">
-                <button
-                  onClick={() => navigate("/donate")}
-                  className="btn-pulse px-8 py-3.5 rounded-full font-semibold text-white transition-all duration-300 hover:scale-105"
-                  style={{ background: 'linear-gradient(135deg, #F2AABF 0%, #7B6DB0 100%)', fontSize: '1rem' }}
-                >
-                  Donate Now →
-                </button>
-                <button
-                  onClick={() => navigate("/about")}
-                  className="px-8 py-3.5 rounded-full font-semibold transition-all duration-300 hover:scale-105"
-                  style={{ background: 'rgba(255,255,255,.12)', border: '1px solid rgba(255,255,255,.35)', color: '#fff', backdropFilter: 'blur(8px)', fontSize: '1rem' }}
-                >
-                  Learn More
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
+  {/* Content */}
+  <div className="relative z-10 max-w-6xl mx-auto px-6 lg:px-12 w-full flex items-center min-h-[92vh]">
+    
+    {/* LEFT SIDE WRAPPER */}
+    <div className="w-full lg:w-1/2 flex justify-start pl-2 lg:-ml-12">
+      
+      {/* TEXT CONTENT */}
+      <div className="max-w-xl text-center lg:text-left">
+        
+        {/* Badge */}
+        <p
+          className="hero-line badge"
+          style={{
+            color: "#e8d5f5",
+            background: "rgba(255,255,255,.12)",
+            borderColor: "rgba(255,255,255,.25)",
+          }}
+        >
+          <span
+            className="badge-dot"
+            style={{ background: "#F2AABF" }}
+          />
+          Apeksha Hospital · Bringing Hope to Cancer Patients
+        </p>
+
+        {/* Heading */}
+        <h1
+          className="hero-line mt-6 font-black leading-none text-white"
+          style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: "clamp(3rem, 7vw, 5.5rem)",
+          }}
+        >
+          Give Hope.<br />
+          <span style={{ color: "#F2AABF" }}>Save Lives.</span>
+        </h1>
+
+        {/* Description */}
+        <p
+          className="hero-line mt-6 text-base md:text-lg leading-relaxed"
+          style={{
+            color: "rgba(255,255,255,.75)",
+            maxWidth: "38ch",
+          }}
+        >
+          Your donation provides real relief — medicine, nutrition, and care — for cancer patients facing financial hardship during treatment.
+        </p>
+
+        {/* Buttons */}
+        <div className="hero-line mt-10 flex flex-wrap gap-4 justify-center lg:justify-start">
+          
+          <button
+            onClick={() => navigate("/donate")}
+            className="btn-pulse px-8 py-3.5 rounded-full font-semibold text-white transition-all duration-300 hover:scale-105"
+            style={{
+              background:
+                "linear-gradient(135deg, #F2AABF 0%, #7B6DB0 100%)",
+            }}
+          >
+            Donate Now →
+          </button>
+
+          <button
+            onClick={() => navigate("/about")}
+            className="px-8 py-3.5 rounded-full font-semibold transition-all duration-300 hover:scale-105"
+            style={{
+              background: "rgba(255,255,255,.12)",
+              border: "1px solid rgba(255,255,255,.35)",
+              color: "#fff",
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            Learn More
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
 
         {/* ── STATS BAR ── */}
         <section className="stat-bar py-14">
