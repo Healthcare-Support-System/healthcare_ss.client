@@ -718,7 +718,7 @@ const MakeRequest = () => {
     const cleanedItems = formData.items.map((item) => ({
       item_name: item.item_name.trim(),
       quantity: Number(item.quantity),
-      uunit:
+      unit:
         item.unit === "other"
           ? (item.custom_unit || "").trim()
           : (item.unit || "").trim(),
@@ -2235,9 +2235,6 @@ const MakeRequest = () => {
                           <option value="">Select Request Type</option>
                           <option value="Medicine">Medicine</option>
                           <option value="Nutrition">Nutrition</option>
-                          <option value="Medical Equipment">
-                            Medical Equipment
-                          </option>
                         </select>
                         {validationErrors.request_type && (
                           <p
