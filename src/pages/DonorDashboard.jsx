@@ -227,7 +227,7 @@ function generateDonationSummary(entry, profile) {
 
 /* ─── Styles ─────────────────────────────────────────────── */
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
 
   :root {
     --plum:      #5E548E;
@@ -368,7 +368,6 @@ const css = `
     flex-shrink: 0;
   }
   .dd-hero-heading {
-    font-family: 'Playfair Display', Georgia, serif;
     font-size: clamp(2.2rem, 4vw, 3.4rem);
     font-weight: 500;
     color: #fff;
@@ -402,7 +401,6 @@ const css = `
     min-width: 88px;
   }
   .dd-hero-stat-num {
-    font-family: 'Playfair Display', Georgia, serif;
     font-size: 1.6rem;
     font-weight: 500;
     color: #fff;
@@ -530,7 +528,6 @@ const css = `
     margin-bottom: 24px;
   }
   .dd-section-title {
-    font-family: 'Playfair Display', Georgia, serif;
     font-size: 1.65rem;
     font-weight: 500;
     color: var(--ink);
@@ -599,14 +596,12 @@ const css = `
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Playfair Display', Georgia, serif;
     font-size: 1.6rem;
     color: #fff;
     font-style: italic;
   }
   .dd-profile-banner-info { flex: 1; min-width: 0; }
   .dd-profile-banner-name {
-    font-family: 'Playfair Display', Georgia, serif;
     font-size: 1.4rem;
     font-weight: 500;
     color: var(--ink);
@@ -966,7 +961,6 @@ const css = `
     justify-content: center;
   }
   .dd-empty-title {
-    font-family: 'Playfair Display', Georgia, serif;
     font-size: 1.4rem;
     font-weight: 500;
     color: var(--plum);
@@ -1003,7 +997,6 @@ const css = `
   }
   .dd-modal-wide { max-width: 520px; }
   .dd-modal-title {
-    font-family: 'Playfair Display', Georgia, serif;
     font-size: 1.5rem;
     font-weight: 500;
     color: var(--plum);
@@ -1194,7 +1187,9 @@ const DonorDashboard = () => {
   }, [profile?.id]);
 
   useEffect(() => {
-    if (activeTab === "history" && profile?.id) fetchDonationHistory();
+    if (activeTab === "history" && profile?.id) {
+      fetchDonationHistory();
+    }
   }, [activeTab, fetchDonationHistory, profile?.id]);
 
   /* ─ Profile handlers ─ */
@@ -1463,6 +1458,14 @@ const DonorDashboard = () => {
                 >
                   <svg className="dd-nav-icon" viewBox="0 0 20 20"><rect x="3" y="4" width="14" height="13" rx="2" /><path d="M7 2v4M13 2v4M3 9h14" /></svg>
                   Donation History
+                </button>
+                <button
+                  type="button"
+                  className={`dd-nav-item ${activeTab === "donation-usage" ? "active" : ""}`}
+                  onClick={() => setActiveTab("donation-usage")}
+                >
+                  <svg className="dd-nav-icon" viewBox="0 0 20 20"><path d="M10 3v14M3 10h14" /><circle cx="10" cy="10" r="7" /></svg>
+                  Donation Usage
                 </button>
               </div>
               <div className="dd-nav-divider" />
@@ -1835,6 +1838,7 @@ const DonorDashboard = () => {
                 }
               </section>
             )}
+
           </main>
         </div>
       </div>
