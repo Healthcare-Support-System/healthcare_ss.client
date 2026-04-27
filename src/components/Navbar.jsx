@@ -82,7 +82,7 @@ const Navbar = () => {
             { label: "Home", to: ROUTES.HOME },
             { label: "About Us", to: ROUTES.ABOUT },
             { label: "Awareness", to: ROUTES.AWARENESS },
-            { label: "How it works", to: ROUTES.STORIES },
+            { label: "Donation Guide", to: ROUTES.STORIES },
           ].map(({ label, to }) => (
             <Link
               key={to}

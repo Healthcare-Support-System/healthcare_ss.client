@@ -5,6 +5,7 @@ export const ROUTES = {
     ABOUT: "/about",
     AWARENESS: "/awareness",
     DONATE: "/donate",
+    DONATION_GUIDE: "/donation-guide",
     STORIES: "/stories",
     DONOR_DASHBOARD: "/donor-dashboard",
     ADMIN_DASHBOARD: "/admin",
