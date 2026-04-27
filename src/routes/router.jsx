@@ -3,7 +3,7 @@ import App from "../App";
 import About from "../pages/About";
 import Awareness from "../pages/Awareness";
 import DonateUs from "../pages/DonateUs";
-import Stories from "../pages/Stories";
+import DonationGuide from "../pages/DonationGuide";
 import { ROUTES } from "./path";
 import Home from "../pages/Home";
 import { AuthProvider } from "../contexts/AuthContext";
@@ -36,7 +36,8 @@ export const AppRouter = createBrowserRouter([
       { path: ROUTES.HOME, element: <Home /> },
       { path: ROUTES.ABOUT, element: <About /> },
       { path: ROUTES.AWARENESS, element: <Awareness /> },
-      { path: ROUTES.STORIES, element: <Stories /> },
+      { path: ROUTES.STORIES, element: <DonationGuide /> },
+      { path: ROUTES.DONATION_GUIDE, element: <DonationGuide /> },
 
       {
         path: ROUTES.DONATE,
