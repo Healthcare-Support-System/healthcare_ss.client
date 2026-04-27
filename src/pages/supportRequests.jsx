@@ -20,6 +20,12 @@ const ViewAllSupportRequests = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState(null);
   const [donorProfile, setDonorProfile] = useState(null);
+  const [authPopup, setAuthPopup] = useState({
+    open: false,
+    title: "",
+    message: "",
+    redirectToSignIn: false,
+  });
   const [statusFilter, setStatusFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -87,21 +93,46 @@ const ViewAllSupportRequests = () => {
     [donorProfile, user],
   );
 
+  const showAuthPopup = ({ title, message, redirectToSignIn = false }) => {
+    setAuthPopup({
+      open: true,
+      title,
+      message,
+      redirectToSignIn,
+    });
+  };
+
+  const closeAuthPopup = () => {
+    setAuthPopup({
+      open: false,
+      title: "",
+      message: "",
+      redirectToSignIn: false,
+    });
+  };
+
   const handleDonateClick = (requestId) => {
     if (authLoading) return;
     if (!isAuthenticated || !user) {
-      alert("Please sign in before making a donation.");
-      navigate(ROUTES.SIGNIN);
+      showAuthPopup({
+        title: "Sign In Required",
+        message: "Please sign in before making a donation.",
+        redirectToSignIn: true,
+      });
       return;
     }
     if (user.role !== "donor") {
-      alert("Only donor accounts can submit donations.");
+      showAuthPopup({
+        title: "Donor Account Needed",
+        message: "Only donor accounts can submit donations.",
+      });
       return;
     }
     if (!donor.id) {
-      alert(
-        "Your donor profile is still loading. Please try again in a moment.",
-      );
+      showAuthPopup({
+        title: "Profile Still Loading",
+        message: "Your donor profile is still loading. Please try again in a moment.",
+      });
       return;
     }
     setSelectedRequestId(requestId);
@@ -381,7 +412,89 @@ const ViewAllSupportRequests = () => {
         .vsr-item-row:hover .vsr-item-badge {
           transform: scale(1.1);
         }
+        .vsr-popup-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(32, 17, 56, 0.52);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+          z-index: 9999;
+        }
+        .vsr-popup-card {
+          width: 100%;
+          max-width: 400px;
+          border-radius: 18px;
+          background: #fff;
+          border: 1px solid #eadcf6;
+          box-shadow: 0 24px 60px rgba(74, 41, 153, 0.22);
+          overflow: hidden;
+        }
+        .vsr-popup-body {
+          padding: 22px;
+        }
+        .vsr-popup-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+          margin-top: 18px;
+        }
+        .vsr-popup-btn-secondary {
+          border: 1px solid #e2d7ef;
+          background: white;
+          color: #6a5491;
+          border-radius: 12px;
+          padding: 10px 14px;
+          font-size: 12.5px;
+          font-weight: 600;
+        }
+        .vsr-popup-btn-primary {
+          border: none;
+          background: #4a2999;
+          color: white;
+          border-radius: 12px;
+          padding: 10px 14px;
+          font-size: 12.5px;
+          font-weight: 600;
+        }
       `}</style>
+
+      {authPopup.open && (
+        <div className="vsr-popup-overlay">
+          <div className="vsr-popup-card">
+            <div className="vsr-popup-body">
+              <h3 className="text-[18px] font-bold mb-2" style={{ color: "#3d2a7a" }}>
+                {authPopup.title}
+              </h3>
+              <p className="text-[13px] leading-6" style={{ color: "#8d73b2" }}>
+                {authPopup.message}
+              </p>
+              <div className="vsr-popup-actions">
+                <button
+                  type="button"
+                  className="vsr-popup-btn-secondary"
+                  onClick={closeAuthPopup}
+                >
+                  Close
+                </button>
+                {authPopup.redirectToSignIn && (
+                  <button
+                    type="button"
+                    className="vsr-popup-btn-primary"
+                    onClick={() => {
+                      closeAuthPopup();
+                      navigate(ROUTES.SIGNIN);
+                    }}
+                  >
+                    Sign In
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div
         className="vsr-root min-h-screen"

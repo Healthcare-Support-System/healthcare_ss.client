@@ -282,7 +282,7 @@ const Donations = () => {
       return;
     }
 
-    const allowedStatuses = ["received", "allocated", "used", "completed"];
+    const allowedStatuses = ["received", "allocated"];
     if (!allowedStatuses.includes(newStatus)) {
       showPopup({
         title: "Invalid Status",
@@ -442,6 +442,7 @@ const Donations = () => {
                     <TH>Status</TH>
                     <TH>Received Date</TH>
                     <TH>Donor</TH>
+                    <TH>Phone Number</TH>
                     <TH>Remarks</TH>
                     <TH center>Actions</TH>
                   </tr>
@@ -450,6 +451,7 @@ const Donations = () => {
                   {donations.map((donation, idx) => {
                     const status = donation.donation_status || "received";
                     const sc     = STATUS_MAP[status] || STATUS_MAP.received;
+                    const donorName = `${donation.donor_id?.first_name || ""} ${donation.donor_id?.last_name || ""}`.trim();
 
                     return (
                       <tr
@@ -494,8 +496,6 @@ const Donations = () => {
                           >
                             <option value="received" disabled>received</option>
                             <option value="allocated">allocated</option>
-                            <option value="used">used</option>
-                            <option value="completed">completed</option>
                           </select>
                         </td>
 
@@ -511,8 +511,15 @@ const Donations = () => {
                         {/* Donor */}
                         <td className="px-3 py-2.5 font-medium text-[#2e2840] max-w-[160px]">
                           <span className="block truncate">
-                            {donation.donor_id?.name || donation.donor_id?._id
+                            {donorName
                               || <span className="text-[#D4B8C0]">—</span>}
+                          </span>
+                        </td>
+
+                        {/* Phone Number */}
+                        <td className="px-3 py-2.5 text-[#5a5070] max-w-[140px]">
+                          <span className="block truncate">
+                            {donation.donor_id?.phone || <span className="text-[#D4B8C0]">—</span>}
                           </span>
                         </td>
 
