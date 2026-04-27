@@ -25,27 +25,40 @@ const ReceivedDonation = () => {
 
   const API_BASE_URL = "http://localhost:8000";
 
-  // Unit dropdown options
-  const unitOptions = [
-    "pcs",
-    "boxes",
-    "bottles",
-    "packs",
-    "strips",
-    "tubes",
-    "sachets",
-    "kg",
-    "g",
-    "litre",
-    "ml"
-  ];
-
   const inputCls = `w-full border border-[#F0E5E8] rounded-lg px-3 py-2 text-[12.5px]
     text-[#3a3248] bg-white placeholder-[#E8D9DE]
     focus:outline-none focus:border-[#5E548E] focus:ring-2 focus:ring-[#5E548E]/10
     transition-all duration-150`;
 
   const errorCls = "text-[11px] text-rose-600 mt-1";
+
+  const normalizeDonationType = (value) => {
+    const normalized = String(value || "").trim().toLowerCase();
+    if (normalized === "medicine" || normalized === "nutrients") {
+      return normalized;
+    }
+    if (
+      normalized.includes("medical") ||
+      normalized.includes("medicine") ||
+      normalized.includes("drug")
+    ) {
+      return "medicine";
+    }
+    if (
+      normalized.includes("nutrient") ||
+      normalized.includes("nutrition") ||
+      normalized.includes("supplement")
+    ) {
+      return "nutrients";
+    }
+    return "";
+  };
+
+  const formatDonationTypeLabel = (value) => {
+    if (value === "medicine") return "Medicine";
+    if (value === "nutrients") return "Nutrients";
+    return "";
+  };
 
   // Validation for reference code field
   const validateReferenceCode = (value) => {
@@ -113,10 +126,6 @@ const ReceivedDonation = () => {
       return "Unit is required";
     }
 
-    if (!unitOptions.includes(value)) {
-      return "Please select a valid unit";
-    }
-
     return "";
   };
 
@@ -160,6 +169,14 @@ const ReceivedDonation = () => {
       // Fetched donation request data from backend using reference code
       const foundDonationRequest = response.data.data;
       setDonationRequest(foundDonationRequest);
+      setDonationType(
+        normalizeDonationType(
+          foundDonationRequest.donation_type ||
+          foundDonationRequest.request_id?.donation_type ||
+          foundDonationRequest.request_id?.request_type
+        )
+      );
+      setDonationTypeError("");
 
       // Fetched support request items from the found donation request
       // If items exist, auto-fill the received items table with them
@@ -169,7 +186,7 @@ const ReceivedDonation = () => {
         const mappedItems = supportRequestItems.map((item) => ({
           item_name: item.item_name || "",
           quantity: item.quantity || "",
-          unit: unitOptions.includes(item.unit) ? item.unit : "",
+          unit: item.unit || "",
           received: true,
         }));
 
@@ -226,25 +243,6 @@ const ReceivedDonation = () => {
     }
 
     setItemErrors(updatedErrors);
-  };
-
-  const addNewItemRow = () => {
-    setReceivedItems([
-      ...receivedItems,
-      { item_name: "", quantity: "", unit: "", received: true }
-    ]);
-
-    setItemErrors([
-      ...itemErrors,
-      { item_name: "", quantity: "", unit: "" }
-    ]);
-  };
-
-  const removeItemRow = (index) => {
-    if (receivedItems.length === 1) return;
-
-    setReceivedItems(receivedItems.filter((_, i) => i !== index));
-    setItemErrors(itemErrors.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -496,21 +494,12 @@ const ReceivedDonation = () => {
               <label className="block text-[13px] font-semibold text-[#5E548E] mb-2.5">
                 Donation Type <span className="text-rose-500">*</span>
               </label>
-              <select
-                value={donationType}
-                onChange={(e) => {
-                  setDonationType(e.target.value);
-                  setDonationTypeError(validateDonationType(e.target.value));
-                }}
-                onBlur={(e) =>
-                  setDonationTypeError(validateDonationType(e.target.value))
-                }
-                className={`${inputCls} rd-select`}
-              >
-                <option value="">Select donation type</option>
-                <option value="medicine">Medicine</option>
-                <option value="nutrients">Nutrients</option>
-              </select>
+              <input
+                type="text"
+                value={formatDonationTypeLabel(donationType)}
+                readOnly
+                className={`${inputCls} bg-[#FDF5F7] cursor-not-allowed text-[#B5838D] font-medium`}
+              />
               {donationTypeError && <p className={errorCls}>{donationTypeError}</p>}
             </div>
 
@@ -523,8 +512,8 @@ const ReceivedDonation = () => {
                 Received Items
               </label>
 
-              <div className="grid grid-cols-5 gap-2.5 mb-1.5 px-0.5">
-                {["Item Name", "Quantity", "Unit", "Status", ""].map((h, i) => (
+              <div className="grid grid-cols-4 gap-2.5 mb-1.5 px-0.5">
+                {["Item Name", "Quantity", "Unit", "Status"].map((h, i) => (
                   <span
                     key={i}
                     className="text-[9.5px] font-bold uppercase tracking-[0.1em] text-[#B5838D]"
@@ -536,19 +525,13 @@ const ReceivedDonation = () => {
 
               {receivedItems.map((item, index) => (
                 <div key={index} className="mb-3">
-                  <div className="grid grid-cols-5 gap-2.5 items-start">
+                  <div className="grid grid-cols-4 gap-2.5 items-start">
                     <div>
                       <input
                         type="text"
-                        placeholder="Item name"
                         value={item.item_name}
-                        onChange={(e) =>
-                          handleItemChange(index, "item_name", e.target.value)
-                        }
-                        onBlur={(e) =>
-                          handleItemChange(index, "item_name", e.target.value)
-                        }
-                        className={inputCls}
+                        readOnly
+                        className={`${inputCls} bg-[#FDF5F7] cursor-not-allowed text-[#B5838D] font-medium`}
                       />
                       {itemErrors[index]?.item_name && (
                         <p className={errorCls}>{itemErrors[index].item_name}</p>
@@ -558,16 +541,9 @@ const ReceivedDonation = () => {
                     <div>
                       <input
                         type="number"
-                        placeholder="Qty"
                         value={item.quantity}
-                        onChange={(e) =>
-                          handleItemChange(index, "quantity", e.target.value)
-                        }
-                        onBlur={(e) =>
-                          handleItemChange(index, "quantity", e.target.value)
-                        }
-                        className={inputCls}
-                        min="1"
+                        readOnly
+                        className={`${inputCls} bg-[#FDF5F7] cursor-not-allowed text-[#B5838D] font-medium`}
                       />
                       {itemErrors[index]?.quantity && (
                         <p className={errorCls}>{itemErrors[index].quantity}</p>
@@ -575,23 +551,12 @@ const ReceivedDonation = () => {
                     </div>
 
                     <div>
-                      <select
+                      <input
+                        type="text"
                         value={item.unit}
-                        onChange={(e) =>
-                          handleItemChange(index, "unit", e.target.value)
-                        }
-                        onBlur={(e) =>
-                          handleItemChange(index, "unit", e.target.value)
-                        }
-                        className={`${inputCls} rd-select`}
-                      >
-                        <option value="">Select unit</option>
-                        {unitOptions.map((unit) => (
-                          <option key={unit} value={unit}>
-                            {unit}
-                          </option>
-                        ))}
-                      </select>
+                        readOnly
+                        className={`${inputCls} bg-[#FDF5F7] cursor-not-allowed text-[#B5838D] font-medium`}
+                      />
                       {itemErrors[index]?.unit && (
                         <p className={errorCls}>{itemErrors[index].unit}</p>
                       )}
@@ -614,62 +579,9 @@ const ReceivedDonation = () => {
                         <option value="false">Not Received</option>
                       </select>
                     </div>
-
-                    <div>
-                      <button
-                        type="button"
-                        onClick={() => removeItemRow(index)}
-                        disabled={receivedItems.length === 1}
-                        className="flex items-center justify-center gap-1 px-3 py-2 text-[11.5px] font-medium
-                          text-[#B5838D] border border-[#F0E5E8] rounded-lg
-                          hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200
-                          disabled:opacity-40 disabled:cursor-not-allowed
-                          transition-all duration-150 active:scale-95 w-full"
-                      >
-                        <svg
-                          width="11"
-                          height="11"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="3 6 5 6 21 6" />
-                          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                          <path d="M10 11v6M14 11v6M9 6V4h6v2" />
-                        </svg>
-                        Remove
-                      </button>
-                    </div>
                   </div>
                 </div>
               ))}
-
-              <button
-                type="button"
-                onClick={addNewItemRow}
-                className="mt-1 flex items-center gap-1.5 px-3.5 py-1.5 text-[12px] font-semibold
-                  text-[#5E548E] border border-[#F0E5E8] rounded-lg bg-[#FDF5F7]
-                  hover:bg-[#5E548E] hover:text-white hover:border-[#5E548E]
-                  transition-all duration-200 active:scale-95"
-              >
-                <svg
-                  width="11"
-                  height="11"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Add Item
-              </button>
             </div>
 
             {/* Donation Status (read-only) */}

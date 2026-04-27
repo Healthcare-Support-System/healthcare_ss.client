@@ -7,6 +7,7 @@ const ManageDonationRequests = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [activeFilter, setActiveFilter] = useState("total");
   const { token } = useAuth();
 
   const [popup, setPopup] = useState({
@@ -128,6 +129,11 @@ const ManageDonationRequests = () => {
     </div>
   );
 
+  const filteredRequests = requests.filter((request) => {
+    if (activeFilter === "total") return true;
+    return (request.status || "pending") === activeFilter;
+  });
+
   /* ── Loading ── */
   if (loading) {
     return (
@@ -242,6 +248,30 @@ const ManageDonationRequests = () => {
           </div>
         )}
 
+        {requests.length > 0 && (
+          <div className="flex flex-wrap gap-2.5 mb-5">
+            {[
+              { key: "total", label: "Total", value: requests.length },
+              { key: "pending", label: "Pending", value: requests.filter((r) => (r.status || "pending") === "pending").length },
+              { key: "accepted", label: "Accepted", value: requests.filter((r) => r.status === "accepted").length },
+              { key: "rejected", label: "Rejected", value: requests.filter((r) => r.status === "rejected").length },
+            ].map(({ key, label, value }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setActiveFilter(key)}
+                className={`px-4 py-2 text-[12px] font-semibold rounded-xl border transition-all duration-150 active:scale-95 ${
+                  activeFilter === key
+                    ? "bg-[#4A3F7A] text-white border-[#4A3F7A] shadow-sm"
+                    : "bg-white text-[#5a5070] border-[#E2CDD3] hover:bg-[#F7EBF0]"
+                }`}
+              >
+                {label} ({value})
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* ── Alerts ── */}
         {error && (
           <div className="flex items-start gap-2 bg-[#FDF0F1] border border-rose-200 border-l-4 border-l-[#D4737A]
@@ -284,9 +314,16 @@ const ManageDonationRequests = () => {
         )}
 
         {/* ── Request Cards ── */}
-        {requests.length > 0 && (
+        {requests.length > 0 && filteredRequests.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 gap-2.5">
+            <p className="text-[13.5px] font-semibold text-[#2e2840]">No {activeFilter} donation requests found</p>
+            <p className="text-[12px] text-[#9A90A8]">Try another filter to view more requests.</p>
+          </div>
+        )}
+
+        {filteredRequests.length > 0 && (
           <div className="grid gap-3">
-            {requests.map((request, idx) => {
+            {filteredRequests.map((request, idx) => {
               const id     = request._id || request.id;
               const status = request.status || "pending";
               const sc     = statusConfig[status] || statusConfig.pending;
@@ -412,7 +449,7 @@ const ManageDonationRequests = () => {
         {requests.length > 0 && (
           <div className="mt-5 flex items-center justify-between px-1">
             <span className="text-[11px] text-[#9A90A8]">
-              Showing <span className="font-semibold text-[#4A3F7A]">{requests.length}</span> request{requests.length !== 1 ? "s" : ""}
+              Showing <span className="font-semibold text-[#4A3F7A]">{filteredRequests.length}</span> request{filteredRequests.length !== 1 ? "s" : ""}
             </span>
             <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-[#D4B8C0]">
               Cancer Support Fund

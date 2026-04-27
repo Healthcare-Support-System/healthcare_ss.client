@@ -1,7 +1,8 @@
 import React from "react";
+import DonationGuide from "./Donation_guide";
 
 const Stories = () => {
-  return <div>Stories Page</div>;
+  return <DonationGuide />;
 };
 
 export default Stories;
