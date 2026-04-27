@@ -2,6 +2,28 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const validatePasswordStrength = (value) => {
+  if (value.length < 8) {
+    return "Password must be at least 8 characters long";
+  }
+  if (!/[A-Z]/.test(value)) {
+    return "Password must include at least one uppercase letter";
+  }
+  if (!/[a-z]/.test(value)) {
+    return "Password must include at least one lowercase letter";
+  }
+  if (!/\d/.test(value)) {
+    return "Password must include at least one number";
+  }
+  if (!/[^A-Za-z0-9]/.test(value)) {
+    return "Password must include at least one special character";
+  }
+  if (/\s/.test(value)) {
+    return "Password cannot contain spaces";
+  }
+  return null;
+};
+
 const rules = {
   first_name: (v) => {
     if (!v.trim()) return "First name is required";
@@ -19,8 +41,7 @@ const rules = {
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())
       ? null
       : "Enter a valid email address",
-  password: (v) =>
-    v.length >= 8 ? null : "Password must be at least 8 characters long",
+  password: validatePasswordStrength,
   nic: (v) =>
     /^(?:\d{9}[VvXx]|\d{12})$/.test(v.trim())
       ? null
@@ -42,6 +63,11 @@ const backendFieldMap = {
   "First name can only contain letters and spaces": "first_name",
   "Last name can only contain letters and spaces": "last_name",
   "Password must be at least 8 characters long": "password",
+  "Password must include at least one uppercase letter": "password",
+  "Password must include at least one lowercase letter": "password",
+  "Password must include at least one number": "password",
+  "Password must include at least one special character": "password",
+  "Password cannot contain spaces": "password",
 };
 
 const ErrorMsg = ({ message }) =>
@@ -421,7 +447,7 @@ const Signup = () => {
                     <input
                       type="password"
                       name="password"
-                      placeholder="Create password (min. 8 characters)"
+                      placeholder="Create password"
                       value={form.password}
                       onChange={handleChange}
                       className={inputClass("password")}
@@ -429,6 +455,9 @@ const Signup = () => {
                     <ErrorMsg
                       message={touched.password ? getError("password") : null}
                     />
+                    <span className="small-note">
+                      Use 8+ characters with uppercase, lowercase, a number, and a special character.
+                    </span>
                   </div>
                   <button type="button" onClick={nextStep}>
                     Continue →
