@@ -166,6 +166,30 @@ const ManageDonationRequests = () => {
         .mdr-sel:focus { outline: none; box-shadow: 0 0 0 2px rgba(74,63,122,0.15); }
         @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
         .mdr-card { animation: fadeUp 0.25s ease both; }
+        .mdr-hero {
+          background: linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(253,248,246,0.98) 52%, rgba(247,240,248,0.98) 100%);
+          border: 1px solid #E8D7DD;
+          box-shadow: 0 14px 34px rgba(94, 84, 142, 0.08);
+        }
+        .mdr-filter-pill {
+          position: relative;
+          overflow: hidden;
+        }
+        .mdr-filter-pill::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(255,255,255,0.16), transparent 65%);
+          pointer-events: none;
+        }
+        .mdr-card-shell {
+          background: rgba(255,255,255,0.97);
+          border: 1px solid #E6D5DC;
+          box-shadow: 0 14px 34px rgba(94, 84, 142, 0.08);
+        }
+        .mdr-card-top {
+          background: linear-gradient(180deg, #FDF9F7 0%, #FDFAF8 100%);
+        }
       `}</style>
 
       {/* ── Delete Popup ── */}
@@ -217,37 +241,21 @@ const ManageDonationRequests = () => {
       <div className="mdr bg-[#FFF9F5] min-h-screen p-5">
 
         {/* ── Page Header ── */}
-        <div className="mb-5">
-          <div className="flex items-center gap-1.5 mb-2">
+        <div className="mdr-hero rounded-[28px] px-5 py-5 md:px-6 md:py-6 mb-5">
+          <div className="inline-flex items-center gap-1.5 mb-2 px-3 py-1.5 rounded-full bg-[#FAEFF3] border border-[#E8D7DD]">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C9686B"
               strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
-            <span className="text-[9.5px] font-bold uppercase tracking-[0.15em] text-[#C9686B]">
+            <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-[#C9686B]">
               Cancer Support Fund
             </span>
           </div>
-          <h1 className="text-xl font-bold text-[#2e2840] leading-tight">Manage Donation Requests</h1>
-          <p className="text-[11.5px] text-[#9A90A8] mt-0.5">Review, accept, or reject incoming donation requests</p>
+          <h1 className="text-[24px] md:text-[28px] font-bold text-[#2e2840] leading-tight">Manage Donation Requests</h1>
+          <p className="text-[12.5px] text-[#9A90A8] mt-1 leading-6 max-w-xl">Review, accept, or reject incoming donation requests</p>
         </div>
 
         {/* ── Summary Strip ── */}
-        {requests.length > 0 && (
-          <div className="flex items-stretch gap-2.5 mb-5">
-            {[
-              { label: "Total",    value: requests.length,                                          color: "text-[#4A3F7A]" },
-              { label: "Pending",  value: requests.filter(r => (r.status || "pending") === "pending").length,  color: "text-amber-700" },
-              { label: "Accepted", value: requests.filter(r => r.status === "accepted").length,    color: "text-emerald-700" },
-              { label: "Rejected", value: requests.filter(r => r.status === "rejected").length,    color: "text-rose-600" },
-            ].map(({ label, value, color }) => (
-              <div key={label} className="bg-white border border-[#E2CDD3] rounded-xl px-4 py-3 shadow-sm min-w-[80px]">
-                <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-[#C9686B] block">{label}</span>
-                <span className={`text-xl font-bold leading-tight ${color}`}>{value}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
         {requests.length > 0 && (
           <div className="flex flex-wrap gap-2.5 mb-5">
             {[
@@ -260,10 +268,10 @@ const ManageDonationRequests = () => {
                 key={key}
                 type="button"
                 onClick={() => setActiveFilter(key)}
-                className={`px-4 py-2 text-[12px] font-semibold rounded-xl border transition-all duration-150 active:scale-95 ${
+                className={`mdr-filter-pill px-4 py-2.5 text-[12px] font-semibold rounded-2xl border transition-all duration-150 active:scale-95 ${
                   activeFilter === key
-                    ? "bg-[#4A3F7A] text-white border-[#4A3F7A] shadow-sm"
-                    : "bg-white text-[#5a5070] border-[#E2CDD3] hover:bg-[#F7EBF0]"
+                    ? "bg-[#4A3F7A] text-white border-[#4A3F7A] shadow-md"
+                    : "bg-white text-[#5a5070] border-[#E2CDD3] hover:bg-[#F7EBF0] hover:border-[#D7C1CB]"
                 }`}
               >
                 {label} ({value})
@@ -330,14 +338,14 @@ const ManageDonationRequests = () => {
 
               return (
                 <div key={id}
-                  className="mdr-card bg-white border border-[#E2CDD3] rounded-2xl shadow-sm overflow-hidden hover:shadow-md hover:border-[#D4B8C0] transition-all duration-200"
+                  className="mdr-card mdr-card-shell rounded-[28px] overflow-hidden hover:shadow-lg hover:border-[#D4B8C0] transition-all duration-200"
                   style={{ animationDelay: `${idx * 0.04}s` }}>
 
                   {/* ── Card top bar ── */}
-                  <div className="flex items-center justify-between px-4 py-3 bg-[#FDFAF8] border-b border-[#F0E5E8]">
+                  <div className="mdr-card-top flex items-center justify-between px-4 py-3 border-b border-[#F0E5E8]">
                     <div className="flex items-center gap-2.5 min-w-0">
                       {/* Index circle */}
-                      <div className="w-6 h-6 rounded-full bg-[#EDE9F8] flex items-center justify-center flex-shrink-0">
+                      <div className="w-7 h-7 rounded-full bg-[#EDE9F8] flex items-center justify-center flex-shrink-0 shadow-sm">
                         <span className="text-[10px] font-bold text-[#4A3F7A]">{idx + 1}</span>
                       </div>
                       <div className="flex flex-col min-w-0">
@@ -399,7 +407,7 @@ const ManageDonationRequests = () => {
                         <button
                           onClick={() => handleDelete(id)}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium
-                            text-[#9A90A8] border border-[#E2CDD3] rounded-lg bg-transparent
+                            text-[#9A90A8] border border-[#E2CDD3] rounded-xl bg-white/80
                             hover:bg-[#FDF0F1] hover:text-rose-600 hover:border-rose-200
                             transition-all duration-150 active:scale-95"
                         >
