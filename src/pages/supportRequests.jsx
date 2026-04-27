@@ -839,7 +839,13 @@ const ViewAllSupportRequests = () => {
                             className="text-[14px] font-semibold capitalize"
                             style={{ color: "#2e2350" }}
                           >
-                            {request.patient?.gender || "N/A"}, {request.patient?.age ?? "N/A"} yrs
+                            {request.patient?.gender || "N/A"},{" "}
+                            {request.patient?.age === 0
+                              ? "Infant"
+                              : request.patient?.age !== null &&
+                                  request.patient?.age !== undefined
+                                ? `${request.patient.age} yrs`
+                                : "N/A"}
                           </p>
                         </div>
 

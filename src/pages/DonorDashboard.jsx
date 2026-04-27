@@ -1238,7 +1238,7 @@ const DonorDashboard = () => {
     if (!trimmedEmail)     { setProfileErrorMessage("Email address is required."); setShowUpdateConfirm(false); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) { setProfileErrorMessage("Enter a valid email address."); setShowUpdateConfirm(false); return; }
     if (!trimmedNic) { setProfileErrorMessage("NIC is required."); setShowUpdateConfirm(false); return; }
-    if (!/^\d{9}[Vv]$|^\d{12}$/.test(trimmedNic)) { setProfileErrorMessage("Enter a valid NIC number."); setShowUpdateConfirm(false); return; }
+    if (!/^(?:\d{9}[VvXx]|\d{12})$/.test(trimmedNic)) { setProfileErrorMessage("Enter a valid NIC number."); setShowUpdateConfirm(false); return; }
     if (trimmedPhone && !/^07\d{8}$/.test(trimmedPhone)) { setProfileErrorMessage("Enter a valid phone number in the format 07XXXXXXXX."); setShowUpdateConfirm(false); return; }
 
     setIsSaving(true);

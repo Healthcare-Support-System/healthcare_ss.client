@@ -223,7 +223,22 @@ const Awareness = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FFF9F5] text-slate-800">
+    <div className="awareness-root min-h-screen bg-[#FFF9F5] text-slate-800">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+        .awareness-root {
+          font-family: 'DM Sans', sans-serif;
+        }
+
+        .awareness-root h1,
+        .awareness-root h2,
+        .awareness-root h3 {
+          font-family: 'Cormorant Garamond', serif;
+          font-weight: 700;
+          letter-spacing: 0.01em;
+        }
+      `}</style>
       <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(229,152,155,0.28),_transparent_28%),linear-gradient(135deg,#5E548E_0%,#4A4272_100%)] text-white">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute left-8 top-12 h-28 w-28 rounded-full border border-white/40" />
