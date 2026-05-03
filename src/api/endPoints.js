@@ -21,6 +21,7 @@ export const END_POINTS = {
   GET_DONATION_BY_REFERENCE: (code) => `/api/donations/reference/${code}`,
   CREATE_DONATION: "/api/donations",
   GET_ALL_DONATIONS: "/api/donations",
+  GET_DONOR_DONATIONS: (donorId) => `/api/donations/donor/${donorId}`,
   DELETE_DONATION: (id) => `/api/donations/${id}`,
   UPDATE_DONATION_STATUS: (id) => `/api/donations/${id}/status`,
   

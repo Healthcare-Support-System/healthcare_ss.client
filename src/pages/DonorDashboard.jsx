@@ -5,6 +5,7 @@ import { END_POINTS } from "../api/endPoints";
 import { useAuth } from "../contexts/AuthContext";
 import { ROUTES } from "../routes/path";
 import jsPDF from "jspdf";
+import DonationUsageTracking from "./donationusageTracking";
 
 /* ─── Static Data ────────────────────────────────────────── */
 const emptyForm = {
@@ -1836,6 +1837,12 @@ const DonorDashboard = () => {
                     );
                   })
                 }
+              </section>
+            )}
+
+            {activeTab === "donation-usage" && (
+              <section>
+                <DonationUsageTracking />
               </section>
             )}
 
