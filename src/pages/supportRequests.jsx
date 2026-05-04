@@ -27,6 +27,7 @@ const ViewAllSupportRequests = () => {
     redirectToSignIn: false,
   });
   const [statusFilter, setStatusFilter] = useState("all");
+  const [urgencyFilter, setUrgencyFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
   const navigate = useNavigate();
@@ -210,13 +211,16 @@ const ViewAllSupportRequests = () => {
     return isNotExpired && isOpen;
   });
 
-  // Filter requests based on selected status and search term
+  // Filter requests based on selected status, urgency, and search term
   const filteredRequests = visibleRequests.filter((request) => {
     const requestStatus = (request.status || "").toLowerCase();
+    const requestUrgency = (request.urgency_level || "").toLowerCase();
+
     const matchesStatus = statusFilter === "all" || requestStatus === statusFilter;
+    const matchesUrgency = urgencyFilter === "all" || requestUrgency === urgencyFilter;
 
     const query = searchTerm.trim().toLowerCase();
-    if (!query) return matchesStatus;
+    if (!query) return matchesStatus && matchesUrgency;
 
     const searchableText = [
       request.request_type,
@@ -231,7 +235,7 @@ const ViewAllSupportRequests = () => {
       .join(" ")
       .toLowerCase();
 
-    return matchesStatus && searchableText.includes(query);
+    return matchesStatus && matchesUrgency && searchableText.includes(query);
   });
 
   // Count requests by status
@@ -240,6 +244,13 @@ const ViewAllSupportRequests = () => {
     open: visibleRequests.filter(r => (r.status || "").toLowerCase() === "open").length,
     pending: visibleRequests.filter(r => (r.status || "").toLowerCase() === "pending").length,
     fulfilled: visibleRequests.filter(r => (r.status || "").toLowerCase() === "fulfilled").length,
+  };
+
+  // Count requests by urgency
+  const urgencyCounts = {
+    high: visibleRequests.filter(r => (r.urgency_level || "").toLowerCase() === "high").length,
+    medium: visibleRequests.filter(r => (r.urgency_level || "").toLowerCase() === "medium").length,
+    low: visibleRequests.filter(r => (r.urgency_level || "").toLowerCase() === "low").length,
   };
 
   /* ── loading ── */
@@ -622,7 +633,7 @@ const ViewAllSupportRequests = () => {
         {/* ── Content ── */}
         <div className="max-w-6xl mx-auto px-6 py-8">
           {/* Filter + Search Section */}
-          <div className="mb-8 grid gap-3 sm:grid-cols-[220px_1fr]">
+          <div className="mb-8 grid gap-3 sm:grid-cols-[200px_200px_1fr]">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -633,10 +644,26 @@ const ViewAllSupportRequests = () => {
                 border: "2px solid #e8dff7",
               }}
             >
-              <option value="all">All Requests ({statusCounts.all})</option>
+              <option value="all">All Statuses ({statusCounts.all})</option>
               <option value="open">Open ({statusCounts.open})</option>
               <option value="pending">Pending ({statusCounts.pending})</option>
               <option value="fulfilled">Fulfilled ({statusCounts.fulfilled})</option>
+            </select>
+
+            <select
+              value={urgencyFilter}
+              onChange={(e) => setUrgencyFilter(e.target.value)}
+              className="w-full rounded-xl px-3 py-2.5 text-[12.5px] font-semibold outline-none"
+              style={{
+                background: "#fff",
+                color: "#5E548E",
+                border: "2px solid #e8dff7",
+              }}
+            >
+              <option value="all">All Urgencies</option>
+              <option value="high">High Priority ({urgencyCounts.high})</option>
+              <option value="medium">Medium ({urgencyCounts.medium})</option>
+              <option value="low">Low ({urgencyCounts.low})</option>
             </select>
 
             <input
@@ -681,11 +708,11 @@ const ViewAllSupportRequests = () => {
                 className="text-[14px] font-semibold"
                 style={{ color: "#3d2a7a" }}
               >
-                No {statusFilter !== "all" ? statusFilter : ""} requests found
+                No matching requests found
               </p>
               <p className="text-[12.5px]" style={{ color: "#9b6db5" }}>
-                {statusFilter !== "all" 
-                  ? "Try selecting a different filter or check back soon."
+                {statusFilter !== "all" || urgencyFilter !== "all" || searchTerm.trim()
+                  ? "Try adjusting your filters or search term."
                   : "Check back soon — new requests are added regularly."}
               </p>
             </div>
